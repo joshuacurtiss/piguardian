@@ -7,11 +7,11 @@
 
 <script>
 export default {
-    name: "SplashScreen",
+    name: 'SplashScreen',
     props: {
         msg: String
     }
-};
+}
 </script>
 
 <style scoped>
