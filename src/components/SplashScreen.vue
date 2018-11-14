@@ -22,8 +22,15 @@ export default {
 
 <style scoped>
 #splash {
+    position: absolute;
+    background-color: black;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
     text-align: center;
-    margin-top: 37vh;
+    padding-top: 37vh;
 }
 img {
     height: 25vh;
