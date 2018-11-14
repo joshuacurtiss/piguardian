@@ -4,26 +4,44 @@
             msg='Welcome to Pi Guardian' 
             :done='ready'
         />
+        <keypad
+            :maxlength='4'
+            :countdown='30'
+            :active='showAlarmKeypad'
+            @input='showAlarmKeypad=false'
+            @alarm='handleAlarm()'
+        />
     </div>
 </template>
 
 <script>
+import Keypad from './components/Keypad.vue'
 import SplashScreen from './components/SplashScreen.vue'
 
 export default {
     name: 'app',
     components: {
+        Keypad,
         SplashScreen
     },
     data() {
         return {
-            ready: false
+            ready: false,
+            showAlarmKeypad: false
+        }
+    },
+    methods: {
+        handleAlarm() {
+            console.log("Alarm!");
         }
     },
     mounted() {
         setTimeout(()=>{
             this.ready=true;
-        },2644);
+        },2600);
+        setTimeout(()=>{
+            this.showAlarmKeypad=true;
+        },4000);
     }
 }
 </script>
@@ -36,5 +54,6 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #eee;
+    overflow: hidden;
 }
 </style>
