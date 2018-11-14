@@ -30,12 +30,9 @@ export default {
 
 <style>
 body {
-    font-family: "Avenir Next", Arial, Helvetica, sans-serif;
-    background-color:black;
     margin: 0;
-}
-#app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    background-color:black;
+    font-family: "Avenir Next", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #eee;
