@@ -4,6 +4,10 @@
             msg='Welcome to Pi Guardian' 
             :done='ready'
         />
+        <clock 
+            :active='showClock'
+            @click='showClock=false'
+        />
         <keypad
             :maxlength='4'
             :countdown='30'
@@ -15,19 +19,22 @@
 </template>
 
 <script>
+import Clock from './components/Clock.vue'
 import Keypad from './components/Keypad.vue'
 import SplashScreen from './components/SplashScreen.vue'
 
 export default {
     name: 'app',
     components: {
+        Clock,
         Keypad,
         SplashScreen
     },
     data() {
         return {
             ready: false,
-            showAlarmKeypad: false
+            showAlarmKeypad: false,
+            showClock: false
         }
     },
     methods: {
@@ -40,8 +47,8 @@ export default {
             this.ready=true;
         },2600);
         setTimeout(()=>{
-            this.showAlarmKeypad=true;
-        },4000);
+            this.showClock=true;
+        },5000);
     }
 }
 </script>
