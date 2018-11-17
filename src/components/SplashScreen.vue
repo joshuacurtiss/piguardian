@@ -13,11 +13,11 @@ export default {
         done: Boolean
     },
     computed: {
-        containerClass() {
+        containerClass () {
             return this.done ? 'flipY' : '';
         }
     }
-}
+};
 </script>
 
 <style scoped>
@@ -43,7 +43,7 @@ h1 {
 /* Flip logo horizontally, then raise it up */
 .flipX{
     opacity:0;
-	animation: flipX 2s ease-in 0s forwards;
+    animation: flipX 2s ease-in 0s forwards;
 }
 @keyframes flipX {
     0% {

@@ -2,7 +2,7 @@
     <transition name="slide-fade">
         <div v-show='active' class='keypad'>
             <div :class='"countdown " + (alarm ? "alarm" : "")'>
-                <font-awesome-icon 
+                <font-awesome-icon
                     icon='bell'
                     fixed-width
                 />
@@ -13,11 +13,11 @@
             <form>
                 <h1>Enter Passcode</h1>
                 <div class="passcodeui">
-                    <font-awesome-icon 
-                        v-for='index in maxlength' 
-                        :key='index' 
-                        style='padding: 0 0.8vw;' 
-                        :icon='passcode.length>=index ? ["fas","circle"] : ["far","circle"]' 
+                    <font-awesome-icon
+                        v-for='index in maxlength'
+                        :key='index'
+                        style='padding: 0 0.8vw;'
+                        :icon='passcode.length>=index ? ["fas","circle"] : ["far","circle"]'
                     />
                 </div>
                 <button type="button" @click='addDigit(1)'>1 <div>&nbsp;</div></button>
@@ -38,10 +38,10 @@
 </template>
 
 <script>
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faBell, faCircle } from '@fortawesome/free-solid-svg-icons'
-import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons'
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faBell, faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons';
 library.add(faBell, faCircle, faCircleThin);
 export default {
     name: 'Keypad',
@@ -60,52 +60,50 @@ export default {
         }
     },
     computed: {
-        alarm() {
-            return this.currCountdown===0;
+        alarm () {
+            return this.currCountdown === 0;
         },
-        passcodeFull() {
-            return this.passcode.length>=this.maxlength;
+        passcodeFull () {
+            return this.passcode.length >= this.maxlength;
         }
     },
-    data() {
+    data () {
         return {
             currCountdown: 0,
             passcode: ''
-        }
+        };
     },
     methods: {
-        addDigit(digit) {
-            if( ! this.passcodeFull ) 
-                this.passcode+=digit.toString();
+        addDigit (digit) {
+            if (!this.passcodeFull) { this.passcode += digit.toString(); }
         },
-        checkCountdown() {
-            if( this.active ) {
-                this.currCountdown-=1;
-                if( this.currCountdown>0 ) setTimeout(this.checkCountdown,1000);
+        checkCountdown () {
+            if (this.active) {
+                this.currCountdown -= 1;
+                if (this.currCountdown > 0) setTimeout(this.checkCountdown, 1000);
                 else this.$emit('alarm');
             }
         },
-        clearDigits() {
-            this.passcode='';
+        clearDigits () {
+            this.passcode = '';
         },
-        deleteDigit() {
-            if( this.passcode.length ) 
-                this.passcode=this.passcode.substr(0,this.passcode.length-1);
+        deleteDigit () {
+            if (this.passcode.length) { this.passcode = this.passcode.substr(0, this.passcode.length - 1); }
         }
     },
     watch: {
-        active(newval) {
-            if( newval ) {
-                this.currCountdown=this.countdown+1;
-                this.passcode='';
+        active (newval) {
+            if (newval) {
+                this.currCountdown = this.countdown + 1;
+                this.passcode = '';
                 this.checkCountdown();
             }
         },
-        passcode(newval) {
-            if( this.passcodeFull ) this.$emit('input',this.passcode);
+        passcode (newval) {
+            if (this.passcodeFull) this.$emit('input', this.passcode);
         }
     }
-}
+};
 </script>
 
 <style scoped>
@@ -172,7 +170,7 @@ export default {
     border: 1px solid #ccc;
     background-color: #e2e2e2;
     margin: 10px;
-    width: 60px; 
+    width: 60px;
     height: 60px;
     font-size: 24px;
 }

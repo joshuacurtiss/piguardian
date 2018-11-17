@@ -14,46 +14,46 @@ export default {
     props: {
         active: Boolean
     },
-    data() {
+    data () {
         return {
             animationClass: 'rubberBand',
             dt: moment(),
             timeout: null
-        }
+        };
     },
     computed: {
-        formattedDate() {
+        formattedDate () {
             return this.dt.format('dddd, MMMM, D, YYYY');
         },
-        formattedTime() {
+        formattedTime () {
             return this.dt.format('h:mma');
         },
-        msToNextMin() {
+        msToNextMin () {
             return 60000 - this.dt % 60000;
         }
     },
     watch: {
-        active(newval) {
-            if( newval ) this.updateClock();
+        active (newval) {
+            if (newval) this.updateClock();
             else clearTimeout(this.timeout);
         }
     },
     methods: {
-        updateClock() {
-            if( this.active ) {
-                this.dt=moment();
-                this.animationClass='rubberBand';
-                this.timeout=setTimeout(this.updateClock,this.msToNextMin);
-                setTimeout(()=>{
-                    this.animationClass='';
+        updateClock () {
+            if (this.active) {
+                this.dt = moment();
+                this.animationClass = 'rubberBand';
+                this.timeout = setTimeout(this.updateClock, this.msToNextMin);
+                setTimeout(() => {
+                    this.animationClass = '';
                 }, 2000);
             }
         },
-        handleClick() {
+        handleClick () {
             this.$emit('click');
         }
     }
-}
+};
 </script>
 
 <style scoped>

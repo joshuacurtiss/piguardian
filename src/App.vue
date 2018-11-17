@@ -1,10 +1,10 @@
 <template>
     <div id='app'>
-        <splash-screen 
-            msg='Welcome to Pi Guardian' 
+        <splash-screen
+            msg='Welcome to Pi Guardian'
             :done='ready'
         />
-        <clock 
+        <clock
             :active='showClock'
             @click='showClock=false'
         />
@@ -19,9 +19,9 @@
 </template>
 
 <script>
-import Clock from './components/Clock.vue'
-import Keypad from './components/Keypad.vue'
-import SplashScreen from './components/SplashScreen.vue'
+import Clock from './components/Clock.vue';
+import Keypad from './components/Keypad.vue';
+import SplashScreen from './components/SplashScreen.vue';
 
 export default {
     name: 'app',
@@ -30,27 +30,27 @@ export default {
         Keypad,
         SplashScreen
     },
-    data() {
+    data () {
         return {
             ready: false,
             showAlarmKeypad: false,
             showClock: false
-        }
+        };
     },
     methods: {
-        handleAlarm() {
-            console.log("Alarm!");
+        handleAlarm () {
+            console.log('Alarm!');
         }
     },
-    mounted() {
-        setTimeout(()=>{
-            this.ready=true;
-        },2600);
-        setTimeout(()=>{
-            this.showClock=true;
-        },5000);
+    mounted () {
+        setTimeout(() => {
+            this.ready = true;
+        }, 2600);
+        setTimeout(() => {
+            this.showClock = true;
+        }, 5000);
     }
-}
+};
 </script>
 
 <style>
