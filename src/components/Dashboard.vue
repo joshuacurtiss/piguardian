@@ -9,7 +9,14 @@
                     {{ title }}
                 </div>
                 <div class='info'>
-                    Info
+                    Organize by:
+                    <toggle-button
+                        v-model='orgByRoomOrType'
+                        :height='20'
+                        :width='64'
+                        :color='{checked: "#1970d4", unchecked: "#db8411", disabled: "#CCCCCC"}'
+                        :labels='{checked: "Room", unchecked: "Device"}'
+                    />
                 </div>
             </header>
             <main />
@@ -59,6 +66,7 @@ export default {
     data () {
         return {
             events: [],
+            orgByRoomOrType: false,
             title: 'Starting up...'
         };
     },
