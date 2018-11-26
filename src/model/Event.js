@@ -1,13 +1,8 @@
-import moment from 'moment';
-const TIMEFMT = 'h:mm A';
 export default class Event {
-    constructor (timestamp, message, active = true) {
-        this.timestamp = moment(timestamp);
+    constructor (message = '', timestamp = new Date(), active = true) {
         this.message = message;
+        if (timestamp) this.timestamp = timestamp instanceof Date ? timestamp : new Date(timestamp);
         this.active = active;
         return this;
-    }
-    toString () {
-        return `${this.timestamp.format(TIMEFMT)}: ${this.message}`;
     }
 }
