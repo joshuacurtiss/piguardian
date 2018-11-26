@@ -1,6 +1,8 @@
 <template>
     <div id='app'>
-        <dashboard />
+        <dashboard
+            :active='ready'
+        />
         <splash-screen
             msg='Welcome to Pi Guardian'
             :done='ready'

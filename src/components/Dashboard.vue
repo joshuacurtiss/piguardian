@@ -1,43 +1,42 @@
 <template>
-    <div class='dashboard'>
-        <header>
-            <div class='datetime'>
-                <dashboard-clock />
-            </div>
-            <div class='title'>
-                Title
-            </div>
-            <div class='info'>
-                Info
-            </div>
-        </header>
-        <main>
-            Tiles go here!
-            <br /><br />
-        </main>
-        <footer>
-            <img class="logo" src="../assets/logo.png" />
-            <div class="eventcontainer">
-                <!--
-                <transition-group name='event-slide' tag='div'>
-                    <div v-show='activeEvents.length' class="eventcomment">{{ activeEvents[0].toString() }}</div>
-                </transition-group>
-                -->
-            </div>
-            <font-awesome-icon
-                icon='cog'
-                class='btn'
-            />
-            <font-awesome-icon
-                icon='th'
-                class='btn'
-            />
-            <font-awesome-icon
-                icon='power-off'
-                class='btn'
-            />
-        </footer>
-    </div>
+    <transition name="fade">
+        <div v-show='active' class='dashboard'>
+            <header>
+                <div class='datetime'>
+                    <dashboard-clock />
+                </div>
+                <div class='title'>
+                    {{ title }}
+                </div>
+                <div class='info'>
+                    Info
+                </div>
+            </header>
+            <main />
+            <footer>
+                <img class="logo" src="../assets/logo.png" />
+                <div class="eventcontainer">
+                    <!--
+                    <transition-group name='event-slide' tag='div'>
+                        <div v-show='activeEvents.length' class="eventcomment">{{ activeEvents[0].toString() }}</div>
+                    </transition-group>
+                    -->
+                </div>
+                <font-awesome-icon
+                    icon='cog'
+                    class='btn'
+                />
+                <font-awesome-icon
+                    icon='th'
+                    class='btn'
+                />
+                <font-awesome-icon
+                    icon='power-off'
+                    class='btn'
+                />
+            </footer>
+        </div>
+    </transition>
 </template>
 
 <script>
@@ -55,10 +54,12 @@ export default {
         FontAwesomeIcon
     },
     props: {
+        active: Boolean
     },
     data () {
         return {
-            events: []
+            events: [],
+            title: 'Starting up...'
         };
     },
     computed: {
@@ -80,7 +81,6 @@ export default {
 
 <style scoped>
 .dashboard {
-    background-color: #111;
     height: 100vh;
     overflow: hidden;
     margin: 0;
@@ -200,5 +200,12 @@ footer .btn:active {
 .event-slide-enter-to, .event-slide-leave {
     margin-top: 0px;
     height: 5vh;
+}
+/* Transitions */
+.fade-enter-active, .fade-leave-active {
+    transition: transform 0.3s ease 0.8s;
+}
+.fade-enter, .fade-leave-to {
+    transform: scale(1.3,1.3);
 }
 </style>
