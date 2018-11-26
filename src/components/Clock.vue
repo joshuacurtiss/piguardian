@@ -23,7 +23,7 @@ export default {
     },
     computed: {
         formattedDate () {
-            return this.dt.format('dddd, MMMM, D, YYYY');
+            return this.dt.format('dddd, MMMM D, YYYY');
         },
         formattedTime () {
             return this.dt.format('h:mma');
