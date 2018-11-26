@@ -9,7 +9,7 @@
         />
         <clock
             :active='showClock'
-            @click='showClock=false'
+            @click='resetClockTimeout()'
         />
         <keypad
             :maxlength='4'
@@ -39,17 +39,32 @@ export default {
         return {
             ready: false,
             showAlarmKeypad: false,
-            showClock: false
+            showClock: false,
+            showClockTimeout: null,
+            showClockTimeoutLen: 600000 // 10 min
         };
+    },
+    watch: {
+        showAlarmKeypad (value) {
+            this.resetClockTimeout();
+        }
     },
     methods: {
         handleAlarm () {
             console.log('Alarm!');
+        },
+        resetClockTimeout () {
+            this.showClock = false;
+            clearTimeout(this.showClockTimeout);
+            this.showClockTimeout = setTimeout(() => {
+                this.showClock = true;
+            }, this.showClockTimeoutLen);
         }
     },
     mounted () {
         setTimeout(() => {
             this.ready = true;
+            this.resetClockTimeout();
         }, 2600);
     }
 };
