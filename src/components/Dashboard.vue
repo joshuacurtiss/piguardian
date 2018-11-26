@@ -1,7 +1,15 @@
 <template>
     <div class='dashboard'>
         <header>
-            Header
+            <div class='datetime'>
+                <dashboard-clock />
+            </div>
+            <div class='title'>
+                Title
+            </div>
+            <div class='info'>
+                Info
+            </div>
         </header>
         <main>
             Tiles go here!
@@ -33,6 +41,7 @@
 </template>
 
 <script>
+import DashboardClock from './DashboardClock.vue';
 import Event from '../model/Event';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -42,6 +51,7 @@ library.add(faCog, faTh, faPowerOff);
 export default {
     name: 'dashboard',
     components: {
+        DashboardClock,
         FontAwesomeIcon
     },
     props: {
@@ -75,6 +85,32 @@ export default {
     overflow: hidden;
     margin: 0;
     padding: 0;
+}
+/* Header */
+header {
+    height: 5vh;
+}
+header div {
+    font-size: 3vh;
+    width: 28vw;
+    float: left;
+    padding: 0.7vh 1vw 0;
+}
+header .title {
+    text-align: center;
+    width: 37.5vw;
+    background: #333;
+    border-right: 1px solid #444;
+    border-left: 1px solid #444;
+    border-bottom: 1px solid #444;
+    border-bottom-left-radius: 2vh;
+    border-bottom-right-radius: 2vh;
+}
+header .info {
+    text-align: right;
+}
+main {
+    margin: 1vh 1vw;
 }
 /* Control Board (where user controls stuff) */
 footer {
