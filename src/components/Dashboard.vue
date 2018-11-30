@@ -23,7 +23,25 @@
                 <transition name='fade'>
                     <swipe v-show='!orgCustom' ref='deviceScreens' :auto='0' @change='handleChangeScreen'>
                         <swipe-item v-for='i in activeDeviceScreenKeys' :key='i'>
-                            {{ activeDeviceScreens[i] }}
+                            <!--
+                                {{ activeDeviceScreens[i] }}
+                            -->
+                            <ul>
+                                <test-widget x2 />
+                                <test-widget />
+                                <test-widget dim />
+                                <test-widget />
+                                <test-widget />
+                                <test-widget />
+                                <test-widget />
+                                <test-widget />
+                                <test-widget />
+                                <test-widget />
+                                <test-widget />
+                                <test-widget />
+                                <test-widget />
+                                <test-widget />
+                            </ul>
                         </swipe-item>
                     </swipe>
                 </transition>
@@ -62,6 +80,7 @@
 import DashboardClock from './DashboardClock.vue';
 import DashboardEventBubble from './DashboardEventBubble.vue';
 import Event from '../model/Event';
+import TestWidget from './widgets/TestWidget.vue';
 import { Swipe, SwipeItem } from 'vue-swipe';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -74,7 +93,8 @@ export default {
         DashboardEventBubble,
         FontAwesomeIcon,
         Swipe,
-        SwipeItem
+        SwipeItem,
+        TestWidget
     },
     props: {
         active: Boolean
@@ -176,6 +196,7 @@ export default {
 </script>
 
 <style src='vue-swipe/dist/vue-swipe.css'></style>
+<style src='./widgets/Widget.css'></style>
 <style>
 /* Swipe Customizations */
 .mint-swipe-indicator {
@@ -222,6 +243,10 @@ main {
     position: absolute;
     height: 84vh;
     width: 98vw;
+}
+ul {
+    margin: 0;
+    padding: 0;
 }
 /* Control Board (where user controls stuff) */
 footer {
