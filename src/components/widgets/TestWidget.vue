@@ -9,23 +9,22 @@
             :icon='["fas","lightbulb"]'
         />
         <div class='details'>
-            <font-awesome-icon
-                v-show='batteryValid'
-                :icon='batteryIcon'
-            />
+            <battery-indicator v-model='battery' />
             {{ details }}
         </div>
     </li>
 </template>
 
 <script>
+import BatteryIndicator from './BatteryIndicator.vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faLightbulb, faBatteryEmpty, faBatteryFull, faBatteryQuarter, faBatteryHalf, faBatteryThreeQuarters } from '@fortawesome/free-solid-svg-icons';
-library.add(faLightbulb, faBatteryEmpty, faBatteryFull, faBatteryQuarter, faBatteryHalf, faBatteryThreeQuarters);
+import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
+library.add(faLightbulb);
 export default {
     name: 'base-widget',
     components: {
+        BatteryIndicator,
         FontAwesomeIcon
     },
     data () {
@@ -37,21 +36,6 @@ export default {
             title: 'Untitled',
             details: 'Stuff'
         };
-    },
-    computed: {
-        batteryIcon () {
-            if (!this.batteryValid) return null;
-            let icon = 'battery-';
-            if (this.battery > 80) icon += 'full';
-            else if (this.battery > 60) icon += 'three-quarters';
-            else if (this.battery > 40) icon += 'half';
-            else if (this.battery > 20) icon += 'quarter';
-            else icon += 'empty';
-            return icon;
-        },
-        batteryValid () {
-            return this.battery !== null && this.battery !== undefined;
-        }
     },
     props: {
         value: {},
