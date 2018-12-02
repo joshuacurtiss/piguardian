@@ -19,10 +19,10 @@ definition(
     author: "Joshua Curtiss",
     description: "Integration with Pi Guardian app for Raspberry Pi.",
     category: "Safety & Security",
-    iconUrl: "https://raw.githubusercontent.com/joshuacurtiss/HomeAutomation-RaspberryPi/master/logo/logo-1x.png",
-    iconX2Url: "https://raw.githubusercontent.com/joshuacurtiss/HomeAutomation-RaspberryPi/master/logo/logo-2x.png",
-    iconX3Url: "https://raw.githubusercontent.com/joshuacurtiss/HomeAutomation-RaspberryPi/master/logo/logo-3x.png",
-    oauth: [displayName: "Pi Guardian", displayLink: "https://raw.githubusercontent.com/joshuacurtiss/HomeAutomation-RaspberryPi/master/logo/logo-3x.png"]
+    iconUrl: "https://raw.githubusercontent.com/joshuacurtiss/piguardian/master/logo/logo-1x.png",
+    iconX2Url: "https://raw.githubusercontent.com/joshuacurtiss/piguardian/master/logo/logo-2x.png",
+    iconX3Url: "https://raw.githubusercontent.com/joshuacurtiss/piguardian/master/logo/logo-3x.png",
+    oauth: [displayName: "Pi Guardian", displayLink: "https://raw.githubusercontent.com/joshuacurtiss/piguardian/master/logo/logo-3x.png"]
 )
 
 
