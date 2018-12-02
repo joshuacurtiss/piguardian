@@ -127,6 +127,7 @@ def getDeviceProps(device) {
     	id:device.id, 
         device:device.name, 
         name:device.displayName, 
+        capability:pres?"presence":(lock?"lock":(sw?"switch":"contact")),
         value:pres?pres:(lock?lock:(sw?sw:con)),
         battery:device.currentValue("battery")
     ];
