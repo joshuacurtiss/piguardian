@@ -62,14 +62,17 @@
                 <font-awesome-icon
                     icon='cog'
                     class='btn'
+                    @click='addEvent("Not implemented yet!")'
                 />
                 <font-awesome-icon
                     icon='th'
                     class='btn'
+                    @click='addEvent("Not implemented yet!")'
                 />
                 <font-awesome-icon
                     icon='power-off'
                     class='btn'
+                    @click='quit'
                 />
             </footer>
         </div>
@@ -187,6 +190,9 @@ export default {
         },
         handleChangeScreen (index) {
             this.activeScreenIndex = index;
+        },
+        quit () {
+            window.close();
         }
     },
     mounted () {
