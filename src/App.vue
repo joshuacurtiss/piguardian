@@ -24,6 +24,7 @@
 <script>
 import Clock from './components/Clock.vue';
 import Dashboard from './components/Dashboard.vue';
+import { ipcRenderer } from 'electron';
 import Keypad from './components/Keypad.vue';
 import SplashScreen from './components/SplashScreen.vue';
 
@@ -38,6 +39,7 @@ export default {
     data () {
         return {
             ready: false,
+            settings: null,
             showAlarmKeypad: false,
             showClock: false,
             showClockTimeout: null,
@@ -50,6 +52,14 @@ export default {
         }
     },
     methods: {
+        checkReady () {
+            if (this.settings) {
+                this.ready = true;
+                this.resetClockTimeout();
+            } else {
+                setTimeout(this.checkReady, 333);
+            }
+        },
         handleAlarm () {
             console.log('Alarm!');
         },
@@ -61,11 +71,16 @@ export default {
             }, this.showClockTimeoutLen);
         }
     },
+    beforeCreate () {
+        // Request Settings
+        ipcRenderer.send('request-settings');
+        // Set up listeners
+        ipcRenderer.on('request-settings-response', (event, data) => {
+            this.settings = data;
+        });
+    },
     mounted () {
-        setTimeout(() => {
-            this.ready = true;
-            this.resetClockTimeout();
-        }, 2600);
+        setTimeout(this.checkReady, 2600);
     }
 };
 </script>

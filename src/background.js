@@ -1,21 +1,32 @@
 'use strict';
 
-import { app, protocol, BrowserWindow } from 'electron';
+import { app, ipcMain, protocol, BrowserWindow } from 'electron';
+import path from 'path';
+import Settings from './model/Settings';
 import {
     createProtocol,
     installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib';
 const isDevelopment = process.env.NODE_ENV !== 'production';
-
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
+const APPDATADIR = app.getPath('userData') + path.sep;
+const SETTINGSPATH = APPDATADIR + 'state.json';
+const settings = new Settings(SETTINGSPATH);
 let win;
+
+// Listeners
+ipcMain.on('request-settings', (event) => {
+    event.sender.send('request-settings-response', settings);
+});
 
 // Standard scheme must be registered before the app is ready
 protocol.registerStandardSchemes(['app'], { secure: true });
 function createWindow () {
     // Create the browser window.
-    win = new BrowserWindow({ width: 800, height: 600 });
+    win = new BrowserWindow({
+        backgroundColor: '#000',
+        width: isDevelopment ? 1400 : 800,
+        height: isDevelopment ? 600 : 480
+    });
 
     if (isDevelopment || process.env.IS_TEST) {
     // Load the url of the dev server if in development mode
