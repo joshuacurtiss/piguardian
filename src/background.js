@@ -1,31 +1,28 @@
 'use strict';
 
-import { app, ipcMain, protocol, BrowserWindow } from 'electron';
-import path from 'path';
-import Settings from './model/Settings';
+import { app, protocol, BrowserWindow } from 'electron';
 import {
     createProtocol,
     installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib';
 const isDevelopment = process.env.NODE_ENV !== 'production';
-const APPDATADIR = app.getPath('userData') + path.sep;
-const SETTINGSPATH = APPDATADIR + 'state.json';
-const settings = new Settings(SETTINGSPATH);
 let win;
-
-// Listeners
-ipcMain.on('request-settings', (event) => {
-    event.sender.send('request-settings-response', settings);
-});
 
 // Standard scheme must be registered before the app is ready
 protocol.registerStandardSchemes(['app'], { secure: true });
+
+/**
+ * Instantiates the main app window.
+ */
 function createWindow () {
     // Create the browser window.
     win = new BrowserWindow({
         backgroundColor: '#000',
         width: isDevelopment ? 1400 : 800,
-        height: isDevelopment ? 600 : 480
+        height: isDevelopment ? 600 : 480,
+        webPreferences: {
+            webSecurity: false
+        }
     });
 
     if (isDevelopment || process.env.IS_TEST) {

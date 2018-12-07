@@ -7,6 +7,12 @@ export default class Settings {
         this.load();
         return this;
     }
+    get smartthingsIsConfigured () {
+        return (this.smartthings.uri && this.smartthings.token);
+    }
+    get serverIsConfigured () {
+        return (this.server.address && this.server.port);
+    }
     load () {
         try {
             if (this.path.length) {

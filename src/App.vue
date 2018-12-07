@@ -24,10 +24,14 @@
 <script>
 import Clock from './components/Clock.vue';
 import Dashboard from './components/Dashboard.vue';
-import { ipcRenderer } from 'electron';
 import Keypad from './components/Keypad.vue';
+import Settings from './model/Settings';
 import SplashScreen from './components/SplashScreen.vue';
-
+import path from 'path';
+import { remote } from 'electron';
+const APPDATADIR = remote.app.getPath('userData');
+const SETTINGSPATH = path.join(APPDATADIR, 'state.json');
+const settings = new Settings(SETTINGSPATH);
 export default {
     name: 'app',
     components: {
@@ -38,8 +42,8 @@ export default {
     },
     data () {
         return {
+            devices: null,
             ready: false,
-            settings: null,
             showAlarmKeypad: false,
             showClock: false,
             showClockTimeout: null,
@@ -53,7 +57,7 @@ export default {
     },
     methods: {
         checkReady () {
-            if (this.settings) {
+            if (this.devices) {
                 this.ready = true;
                 this.resetClockTimeout();
             } else {
@@ -69,17 +73,56 @@ export default {
             this.showClockTimeout = setTimeout(() => {
                 this.showClock = true;
             }, this.showClockTimeoutLen);
+        },
+        /**
+         * Loads all devices and their status.
+         */
+        loadDevices () {
+            if (settings.smartthingsIsConfigured) {
+                this.$http.get(settings.smartthings.uri + '/devices', {
+                    headers: {
+                        'Authorization': 'Bearer ' + settings.smartthings.token
+                    }
+                }).then(response => {
+                    if (response.body) {
+                        this.devices = response.body;
+                        console.table(JSON.parse(JSON.stringify(this.devices)));
+                    }
+                }).catch((exception) => {
+                    console.error(exception);
+                });
+            } else {
+                console.error('SmartThings configurations are not complete. Skipping device load.');
+            }
+        },
+        /**
+         * Registers this client with SmartThings for event updates.
+         */
+        registerClient () {
+            if (settings.serverIsConfigured && settings.smartthingsIsConfigured) {
+                this.$http.post(settings.smartthings.uri + '/clienturi', {
+                    'uri': `${settings.server.address}:${settings.server.port}/api`
+                }, {
+                    emulateJSON: true,
+                    headers: {
+                        'Authorization': 'Bearer ' + settings.smartthings.token
+                    }
+                }).then(response => {
+                    console.log('Register client result: ', response.body);
+                }).catch((exception) => {
+                    console.error(exception);
+                });
+            } else {
+                console.error('Configurations are not complete. Skipping client registration.');
+            }
         }
     },
-    beforeCreate () {
-        // Request Settings
-        ipcRenderer.send('request-settings');
-        // Set up listeners
-        ipcRenderer.on('request-settings-response', (event, data) => {
-            this.settings = data;
-        });
-    },
     mounted () {
+        // Startup work
+        this.registerClient();
+        this.loadDevices();
+        // Try to check for readiness after 2.6sec.
+        // That's when the splash screen animation is complete.
         setTimeout(this.checkReady, 2600);
     }
 };
