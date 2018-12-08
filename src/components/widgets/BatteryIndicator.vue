@@ -20,7 +20,6 @@ export default {
     },
     computed: {
         batteryIcon () {
-            if (!this.batteryValid) return null;
             let icon = 'battery-';
             if (this.value > 80) icon += 'full';
             else if (this.value > 60) icon += 'three-quarters';
