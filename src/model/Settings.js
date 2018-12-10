@@ -20,7 +20,7 @@ export default class Settings {
                 Object.assign(this, state);
             }
         } catch (e) {
-            console.error('Failed while trying to load settings!', e);
+            console.error('Failed while trying to load settings!', e.message);
         }
     }
     save () {
@@ -33,7 +33,7 @@ export default class Settings {
                 fs.writeJsonSync(this.path, state);
             }
         } catch (e) {
-            console.error('Failed while trying to save settings!', e);
+            console.error('Failed while trying to save settings!', e.message);
         }
     }
 }
