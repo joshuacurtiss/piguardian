@@ -6,7 +6,7 @@
                     <dashboard-clock />
                 </div>
                 <div class='title'>
-                    {{ activeScreenKey }}
+                    {{ title }}
                 </div>
                 <div class='info'>
                     Organize by:
@@ -23,32 +23,48 @@
                 <transition name='fade'>
                     <swipe v-show='!orgCustom' ref='deviceScreens' :auto='0' @change='handleChangeScreen'>
                         <swipe-item v-for='i in activeDeviceScreenKeys' :key='i'>
-                            <!--
+                            <div v-if='Array.isArray(activeDeviceScreens[i])'>
+                                <ul>
+                                    <component
+                                        v-for="deviceId in activeDeviceScreens[i]"
+                                        :key='deviceId'
+                                        v-bind:is='getWidgetForDevice(devicesById[deviceId])'
+                                        v-model='devicesById[deviceId]'
+                                    ></component>
+                                </ul>
+                            </div>
+                            <div v-else-if='typeof activeDeviceScreens[i] === "Object" && componentExists(activeDeviceScreens[i].component || "")'>
+                                <component
+                                    v-bind:is='activeDeviceScreens[i].object'
+                                ></component>
+                            </div>
+                            <div v-else>
                                 {{ activeDeviceScreens[i] }}
-                            -->
-                            <ul>
-                                <test-widget x2 />
-                                <test-widget />
-                                <test-widget dim />
-                                <test-widget />
-                                <test-widget />
-                                <test-widget />
-                                <test-widget />
-                                <test-widget />
-                                <test-widget />
-                                <test-widget />
-                                <test-widget />
-                                <test-widget />
-                                <test-widget />
-                                <test-widget />
-                            </ul>
+                            </div>
                         </swipe-item>
                     </swipe>
                 </transition>
                 <transition name='fade'>
                     <swipe v-show='orgCustom' ref='customScreens' :auto='0' @change='handleChangeScreen'>
                         <swipe-item v-for='i in activeCustomScreenKeys' :key='i'>
-                            {{ activeCustomScreens[i] }}
+                            <div v-if='Array.isArray(activeCustomScreens[i])'>
+                                <ul>
+                                    <component
+                                        v-for="deviceId in activeCustomScreens[i]"
+                                        :key='deviceId'
+                                        v-bind:is='getWidgetForDevice(devicesById[deviceId])'
+                                        v-model='devicesById[deviceId]'
+                                    ></component>
+                                </ul>
+                            </div>
+                            <div v-else-if='typeof activeCustomScreens[i] === "Object" && componentExists(activeCustomScreens[i].component || "")'>
+                                <component
+                                    v-bind:is='activeCustomScreens[i].object'
+                                ></component>
+                            </div>
+                            <div v-else>
+                                {{ activeCustomScreens[i] }}
+                            </div>
                         </swipe-item>
                     </swipe>
                 </transition>
@@ -80,24 +96,53 @@
 </template>
 
 <script>
+// Dashboard elements
 import DashboardClock from './DashboardClock.vue';
 import DashboardEventBubble from './DashboardEventBubble.vue';
 import Event from '../model/Event';
-import TestWidget from './widgets/TestWidget.vue';
+// Widgets
+import ContactWidget from './widgets/ContactWidget.vue';
+import LockWidget from './widgets/LockWidget.vue';
+import PresenceWidget from './widgets/PresenceWidget.vue';
+import SwitchWidget from './widgets/SwitchWidget.vue';
+import UnknownWidget from './widgets/UnknownWidget.vue';
+// Miscellaneous
 import { Swipe, SwipeItem } from 'vue-swipe';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCog, faTh, faPowerOff } from '@fortawesome/free-solid-svg-icons';
 library.add(faCog, faTh, faPowerOff);
+const CAPABILITIES = {
+    'contact': {
+        component: 'ContactWidget',
+        name: 'Doors/Windows'
+    },
+    'lock': {
+        component: 'LockWidget',
+        name: 'Locks'
+    },
+    'presence': {
+        component: 'PresenceWidget',
+        name: 'People'
+    },
+    'switch': {
+        component: 'SwitchWidget',
+        name: 'Lights/Switches'
+    }
+};
 export default {
     name: 'dashboard',
     components: {
+        ContactWidget,
         DashboardClock,
         DashboardEventBubble,
         FontAwesomeIcon,
+        LockWidget,
+        PresenceWidget,
         Swipe,
         SwipeItem,
-        TestWidget
+        SwitchWidget,
+        UnknownWidget
     },
     props: {
         active: Boolean
@@ -105,38 +150,25 @@ export default {
     data () {
         return {
             activeScreenIndex: 0,
-            customScreens: {
-                // TODO: Eventually remove this sample data
-                'Weather': 'My weather screen.',
-                'Living Room': [
-                    'blah', 'hello', 'another'
-                ],
-                'Dining Room': [
-                    'hiya', 'bye', 'bubbazinga'
-                ]
-            },
-            deviceScreens: {
-                // TODO: Eventually remove this sample data
-                'Lights/Switches': [
-                    'one', 'two', 'three'
-                ],
-                'Weather': 'My weather screen',
-                'Doors/Windows': [
-                    'Front Door', 'Back Door'
-                ],
-                'Locks': [
-                    'Front Deadbolt', 'Back Deadbolt'
-                ],
-                'Sensors': [],
-                'People': [
-                    'Josh', 'KD'
-                ]
-            },
+            devices: [],
             events: [],
             orgCustom: false
         };
     },
     computed: {
+        devicesById () {
+            const obj = {};
+            this.devices.forEach(dev => {
+                obj[dev.id] = dev;
+            });
+            return obj;
+        },
+        customScreens () {
+            return window.settings.dashboard.customScreens;
+        },
+        deviceScreens () {
+            return window.settings.dashboard.deviceScreens;
+        },
         topActiveEvent () {
             if (this.activeEvents.length) return this.activeEvents[0];
         },
@@ -167,6 +199,10 @@ export default {
         },
         activeDeviceScreenKeys () {
             return Object.keys(this.activeDeviceScreens);
+        },
+        title () {
+            if (this.orgCustom || !CAPABILITIES[this.activeScreenKey]) return this.activeScreenKey;
+            else return CAPABILITIES[this.activeScreenKey].name;
         }
     },
     watch: {
@@ -178,6 +214,9 @@ export default {
     methods: {
         addEvent (message) {
             this.events.push(new Event(message));
+        },
+        componentExists (name) {
+            return Object.keys(this.$options.components).includes(name);
         },
         filterActiveScreens (screens) {
             let obj = {};
@@ -191,12 +230,38 @@ export default {
         handleChangeScreen (index) {
             this.activeScreenIndex = index;
         },
+        getWidgetForDevice (dev) {
+            if (dev && dev.capability && CAPABILITIES[dev.capability]) return CAPABILITIES[dev.capability].component;
+            else return 'UnknownWidget';
+        },
+        /**
+         * Loads all devices and their status.
+         */
+        loadDevices () {
+            if (window.settings.smartthingsIsConfigured) {
+                this.$http.get(window.settings.smartthings.uri + '/devices', {
+                    headers: {
+                        'Authorization': 'Bearer ' + window.settings.smartthings.token
+                    }
+                }).then(response => {
+                    if (response.body) {
+                        this.devices = response.body;
+                        console.table(JSON.parse(JSON.stringify(this.devices)));
+                    }
+                }).catch((exception) => {
+                    console.error(exception);
+                });
+            } else {
+                console.error('SmartThings configurations are not complete. Skipping device load.');
+            }
+        },
         quit () {
             window.close();
         }
     },
     mounted () {
         this.handleChangeScreen(0);
+        this.loadDevices();
     }
 };
 </script>

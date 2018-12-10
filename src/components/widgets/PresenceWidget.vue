@@ -1,12 +1,13 @@
 <template>
     <li class='widget'
-        :class='{dim, x2}'
+        :class='{dim}'
         :style='style'
     >
         <h1>{{ title }}</h1>
         <font-awesome-icon
             class='icon'
-            :icon='["fas","lightbulb"]'
+            transform='left-2'
+            :icon='["fas", icon]'
         />
         <div class='details'>
             <battery-indicator v-model='battery' />
@@ -17,33 +18,30 @@
 
 <script>
 import BatteryIndicator from './BatteryIndicator.vue';
+import Widget from './Widget';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
-library.add(faLightbulb);
+import { faUser, faQuestion } from '@fortawesome/free-solid-svg-icons';
+library.add(faUser, faQuestion);
 export default {
-    name: 'base-widget',
+    name: 'presence-widget',
+    mixins: [ Widget ],
     components: {
         BatteryIndicator,
         FontAwesomeIcon
     },
+    computed: {
+        icon () {
+            if (this.state.indexOf('present') >= 0) return 'user';
+            else return 'question';
+        }
+    },
     data () {
         return {
             style: {
-                backgroundColor: 'maroon'
-            },
-            battery: 88.3,
-            title: 'Untitled',
-            details: 'Stuff'
+                backgroundColor: 'darkblue'
+            }
         };
-    },
-    props: {
-        value: {},
-        dim: Boolean,
-        x2: Boolean
     }
 };
 </script>
-
-<style scoped>
-</style>

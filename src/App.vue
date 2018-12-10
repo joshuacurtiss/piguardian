@@ -25,13 +25,7 @@
 import Clock from './components/Clock.vue';
 import Dashboard from './components/Dashboard.vue';
 import Keypad from './components/Keypad.vue';
-import Settings from './model/Settings';
 import SplashScreen from './components/SplashScreen.vue';
-import path from 'path';
-import { remote } from 'electron';
-const APPDATADIR = remote.app.getPath('userData');
-const SETTINGSPATH = path.join(APPDATADIR, 'state.json');
-const settings = new Settings(SETTINGSPATH);
 export default {
     name: 'app',
     components: {
@@ -42,7 +36,6 @@ export default {
     },
     data () {
         return {
-            devices: null,
             ready: false,
             showAlarmKeypad: false,
             showClock: false,
@@ -57,7 +50,7 @@ export default {
     },
     methods: {
         checkReady () {
-            if (this.devices) {
+            if (window.settings) {
                 this.ready = true;
                 this.resetClockTimeout();
             } else {
@@ -75,37 +68,16 @@ export default {
             }, this.showClockTimeoutLen);
         },
         /**
-         * Loads all devices and their status.
-         */
-        loadDevices () {
-            if (settings.smartthingsIsConfigured) {
-                this.$http.get(settings.smartthings.uri + '/devices', {
-                    headers: {
-                        'Authorization': 'Bearer ' + settings.smartthings.token
-                    }
-                }).then(response => {
-                    if (response.body) {
-                        this.devices = response.body;
-                        console.table(JSON.parse(JSON.stringify(this.devices)));
-                    }
-                }).catch((exception) => {
-                    console.error(exception);
-                });
-            } else {
-                console.error('SmartThings configurations are not complete. Skipping device load.');
-            }
-        },
-        /**
          * Registers this client with SmartThings for event updates.
          */
         registerClient () {
-            if (settings.serverIsConfigured && settings.smartthingsIsConfigured) {
-                this.$http.post(settings.smartthings.uri + '/clienturi', {
-                    'uri': `${settings.server.address}:${settings.server.port}/api`
+            if (window.settings.serverIsConfigured && window.settings.smartthingsIsConfigured) {
+                this.$http.post(window.settings.smartthings.uri + '/clienturi', {
+                    'uri': `${window.settings.server.address}:${window.settings.server.port}/api`
                 }, {
                     emulateJSON: true,
                     headers: {
-                        'Authorization': 'Bearer ' + settings.smartthings.token
+                        'Authorization': 'Bearer ' + window.settings.smartthings.token
                     }
                 }).then(response => {
                     console.log('Register client result: ', response.body);
@@ -120,7 +92,6 @@ export default {
     mounted () {
         // Startup work
         this.registerClient();
-        this.loadDevices();
         // Try to check for readiness after 2.6sec.
         // That's when the splash screen animation is complete.
         setTimeout(this.checkReady, 2600);
