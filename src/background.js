@@ -1,12 +1,42 @@
 'use strict';
 
 import { app, protocol, BrowserWindow } from 'electron';
+import bodyParser from 'body-parser';
+import express from 'express';
+import path from 'path';
+import Settings from './model/Settings';
 import {
     createProtocol,
     installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib';
+
 const isDevelopment = process.env.NODE_ENV !== 'production';
+const APPDATADIR = app.getPath('userData');
+const SETTINGSPATH = path.join(APPDATADIR, 'state.json');
+const settings = new Settings(SETTINGSPATH);
+const srv = express();
 let win;
+
+/**
+ *  CONFIGURE WEB SERVER
+ */
+
+srv.use(bodyParser.json());
+
+srv.use((req, res, next) => {
+    const dt = new Date().toLocaleString();
+    console.log(`${dt}: ${req.method} ${req.url}${req.body.length ? '\n' : ' '}${typeof req.body === 'object' ? JSON.stringify(req.body) : req.body}`);
+    next();
+});
+
+srv.get('/', (req, res) => {
+    res.send('Hello! Thanks for visiting!');
+});
+
+// TODO: This should receive a msg to reload the server if settings are updated.
+srv.listen(settings.server.port, () => {
+    console.log(`Listening on port ${settings.server.port}!`);
+});
 
 // Standard scheme must be registered before the app is ready
 protocol.registerStandardSchemes(['app'], { secure: true });
