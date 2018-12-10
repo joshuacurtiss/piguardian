@@ -1,7 +1,10 @@
 <template>
     <div id='splash' :class='containerClass'>
         <img alt="Pi Guardian logo" class='flipX' src="../assets/logo.png">
-        <h1 class='fadeIn'>{{ msg }}</h1>
+        <h1 class='fadeUp'>{{ title }}</h1>
+        <transition name='fade'>
+            <div v-show='message' class='message' v-html='message' />
+        </transition>
     </div>
 </template>
 
@@ -9,7 +12,8 @@
 export default {
     name: 'SplashScreen',
     props: {
-        msg: String,
+        title: String,
+        message: String,
         done: Boolean
     },
     computed: {
@@ -39,6 +43,9 @@ h1 {
     color: #e89d31;
     margin: 0;
     opacity: 0;
+}
+.message {
+    margin-top: 2vh;
 }
 /* Flip logo horizontally, then raise it up */
 .flipX{
@@ -71,11 +78,18 @@ h1 {
         margin-top:-8vh;
     }
 }
-/* Fade in the message while bringing it in closer to logo */
-.fadeIn{
-    animation: fadeIn 600ms ease-out 1.4s forwards;
+/* Simple fade transition */
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 1s;
 }
-@keyframes fadeIn {
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+/* Fade in the message while bringing it up closer to logo */
+.fadeUp{
+    animation: fadeUp 600ms ease-out 1.4s forwards;
+}
+@keyframes fadeUp {
     0% {opacity:0; margin-top: 10vh;}
     100% {opacity:1; margin-top: 1vh;}
 }

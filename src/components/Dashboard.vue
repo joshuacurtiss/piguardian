@@ -206,6 +206,11 @@ export default {
         }
     },
     watch: {
+        active (newval) {
+            if (newval === true) {
+                this.loadDevices();
+            }
+        },
         orgCustom (newval) {
             this.activeScreenIndex = 0;
             this.$refs[this.activeScreensName].goto(0);
@@ -260,8 +265,8 @@ export default {
         }
     },
     mounted () {
+        // TODO: Set up timeout to refresh devices on interval defined in window.settings.dashboard.refreshInterval.
         this.handleChangeScreen(0);
-        this.loadDevices();
     }
 };
 </script>

@@ -7,6 +7,9 @@ export default class Settings {
         this.load();
         return this;
     }
+    get ready () {
+        return this.smartthingsIsConfigured && this.serverIsConfigured;
+    }
     get smartthingsIsConfigured () {
         return (this.smartthings.uri && this.smartthings.token);
     }
@@ -16,6 +19,7 @@ export default class Settings {
     load () {
         try {
             if (this.path.length) {
+                // Some code expects this to be synchronous. Check things before changing this.
                 const state = fs.readJsonSync(this.path);
                 Object.assign(this, state);
             }
