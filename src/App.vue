@@ -27,6 +27,7 @@ import Clock from './components/Clock.vue';
 import Dashboard from './components/Dashboard.vue';
 import Keypad from './components/Keypad.vue';
 import SplashScreen from './components/SplashScreen.vue';
+import electron from 'electron';
 import ip from 'ip';
 export default {
     name: 'app',
@@ -110,6 +111,13 @@ export default {
         // Try to check for readiness after 2.6sec.
         // That's when the splash screen animation is complete.
         setTimeout(this.checkReady, 2600);
+        // IPC
+        electron.ipcRenderer.on('device-update', (event, data) => {
+            this.resetClockTimeout();
+            // TODO: Initiate chime for some devices.
+            // TODO: Initiate speech for some devices.
+            // TODO: Initiate screen notification for some devices.
+        });
     }
 };
 </script>

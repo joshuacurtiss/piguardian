@@ -107,6 +107,7 @@ import PresenceWidget from './widgets/PresenceWidget.vue';
 import SwitchWidget from './widgets/SwitchWidget.vue';
 import UnknownWidget from './widgets/UnknownWidget.vue';
 // Miscellaneous
+import electron from 'electron';
 import { Swipe, SwipeItem } from 'vue-swipe';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -267,6 +268,17 @@ export default {
     mounted () {
         // TODO: Set up timeout to refresh devices on interval defined in window.settings.dashboard.refreshInterval.
         this.handleChangeScreen(0);
+        // IPC
+        electron.ipcRenderer.on('device-update', (event, data) => {
+            // If we have a valid comment, put it in the event bubble.
+            if (data.comment) {
+                this.addEvent(data.comment);
+            }
+            // If we can find the device, update it.
+            if (this.devicesById[data.device.id]) {
+                this.devicesById[data.device.id] = data.device;
+            }
+        });
     }
 };
 </script>

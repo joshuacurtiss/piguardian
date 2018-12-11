@@ -33,6 +33,18 @@ srv.get('/', (req, res) => {
     res.send('Hello! Thanks for visiting!');
 });
 
+srv.post('/api/:type', (req, res) => {
+    const type = req.params.type;
+    try {
+        const data = req.body;
+        data.comment = `${data.device.name} is ${data.value}.`;
+        win.webContents.send('device-update', data);
+    } catch (err) {
+        console.log('Error. ' + err);
+    }
+    res.send(`Notification: ${type} ${JSON.stringify(req.body)}`);
+});
+
 // TODO: This should receive a msg to reload the server if settings are updated.
 srv.listen(settings.server.port, () => {
     console.log(`Listening on port ${settings.server.port}!`);
