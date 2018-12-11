@@ -266,8 +266,9 @@ export default {
         }
     },
     mounted () {
-        // TODO: Set up timeout to refresh devices on interval defined in window.settings.dashboard.refreshInterval.
         this.handleChangeScreen(0);
+        // Refresh all devices on a given interval
+        setInterval(this.loadDevices, window.settings.dashboard.refreshInterval);
         // IPC
         electron.ipcRenderer.on('device-update', (event, data) => {
             // If we have a valid comment, put it in the event bubble.
