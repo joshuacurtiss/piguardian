@@ -30,6 +30,7 @@
                                         :key='deviceId'
                                         v-bind:is='getWidgetForDevice(devicesById[deviceId])'
                                         v-model='devicesById[deviceId]'
+                                        @change='updateDevice'
                                     ></component>
                                 </ul>
                             </div>
@@ -54,6 +55,7 @@
                                         :key='deviceId'
                                         v-bind:is='getWidgetForDevice(devicesById[deviceId])'
                                         v-model='devicesById[deviceId]'
+                                        @change='updateDevice'
                                     ></component>
                                 </ul>
                             </div>
@@ -260,6 +262,20 @@ export default {
             } else {
                 console.error('SmartThings configurations are not complete. Skipping device load.');
             }
+        },
+        /**
+         * Sends command to SmartThings to update a device.
+         * @param device {object} The device to update.
+         * @param newvalue The new value to set the device to.
+         */
+        updateDevice (device, newvalue) {
+            this.$http.post(window.settings.smartthings.uri + '/devices/' + device.id, {
+                action: newvalue
+            }, {
+                headers: {
+                    'Authorization': 'Bearer ' + window.settings.smartthings.token
+                }
+            });
         },
         quit () {
             window.close();

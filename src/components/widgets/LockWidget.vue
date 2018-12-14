@@ -2,6 +2,7 @@
     <li class='widget'
         :class='{dim}'
         :style='style'
+        @click='click'
     >
         <h1>{{ title }}</h1>
         <font-awesome-icon
@@ -44,6 +45,11 @@ export default {
                 backgroundColor: 'green'
             }
         };
+    },
+    methods: {
+        click () {
+            this.$emit('change', this.value, this.state === 'lock' ? 'unlock' : 'lock');
+        }
     }
 };
 </script>
