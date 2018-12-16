@@ -296,6 +296,12 @@ export default {
                 this.devicesById[data.device.id] = data.device;
             }
         });
+        electron.ipcRenderer.on('message', (event, data) => {
+            // If we have a valid comment, put it in the event bubble.
+            if (data.comment) {
+                this.addEvent(data.comment);
+            }
+        });
     }
 };
 </script>

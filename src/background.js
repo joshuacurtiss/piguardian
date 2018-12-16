@@ -31,6 +31,17 @@ srv.use((req, res, next) => {
 
 srv.use(express.static('web'));
 
+srv.post('/api/message', (req, res) => {
+    try {
+        const data = req.body;
+        let msg = (data.message || '').replace('#speak', '').trim();
+        data.message = msg;
+        data.comment = `"${msg}"`;
+        win.webContents.send('message', data);
+    } catch (err) { console.log('Error. ' + err); }
+    res.send(`Thanks for your message! ${JSON.stringify(req.body)}`);
+});
+
 srv.post('/api/:type', (req, res) => {
     const type = req.params.type;
     try {

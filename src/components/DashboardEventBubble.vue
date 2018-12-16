@@ -2,8 +2,10 @@
     <div class="eventcontainer">
         <transition name='event-slide'>
             <div v-show='event && event.active' class='eventcomment'>
-                {{ formattedTimestamp }}:
-                {{ formattedMessage }}
+                <div>
+                    {{ formattedTimestamp }}:
+                    {{ formattedMessage }}
+                </div>
             </div>
         </transition>
     </div>
@@ -60,14 +62,20 @@ export default {
 .eventcomment {
     position: relative;
     background: #f3961c;
-    color: white;
     padding: 0 0.75vw;
-    font-size: 2.75vh;
-    line-height: 5vh;
+    height: 5vh;
     border: 1px solid #d98619;
     border-radius: 6px;
-    text-align: left;
     margin-bottom: 2vh;
+}
+.eventcomment > div {
+    color: white;
+    font-size: 2.75vh;
+    line-height: 5vh;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .eventcomment:after, .eventcomment:before {
     right: 100%;
