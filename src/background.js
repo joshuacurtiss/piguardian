@@ -29,9 +29,7 @@ srv.use((req, res, next) => {
     next();
 });
 
-srv.get('/', (req, res) => {
-    res.send('Hello! Thanks for visiting!');
-});
+srv.use(express.static('web'));
 
 srv.post('/api/:type', (req, res) => {
     const type = req.params.type;
