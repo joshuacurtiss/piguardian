@@ -48,7 +48,7 @@ export default {
     },
     methods: {
         click () {
-            this.$emit('change', this.value, this.state === 'lock' ? 'unlock' : 'lock');
+            this.$emit('change', this.value, this.state === 'locked' ? 'unlock' : 'lock');
         }
     }
 };
