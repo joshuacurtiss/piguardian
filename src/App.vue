@@ -114,8 +114,6 @@ export default {
         // IPC
         electron.ipcRenderer.on('device-update', (event, data) => {
             this.resetClockTimeout();
-            // TODO: Initiate chime for some devices.
-            // TODO: Initiate speech for some devices.
             // TODO: Initiate screen notification for some devices.
         });
     }
