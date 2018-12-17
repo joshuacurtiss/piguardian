@@ -110,6 +110,8 @@ import SwitchWidget from './widgets/SwitchWidget.vue';
 import UnknownWidget from './widgets/UnknownWidget.vue';
 // Miscellaneous
 import electron from 'electron';
+import PlaySound from 'play-sound';
+import Speech from 'speak-tts';
 import { Swipe, SwipeItem } from 'vue-swipe';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -133,6 +135,8 @@ const CAPABILITIES = {
         name: 'Lights/Switches'
     }
 };
+const player = new PlaySound();
+const speech = new Speech();
 export default {
     name: 'dashboard',
     components: {
@@ -283,13 +287,23 @@ export default {
     },
     mounted () {
         this.handleChangeScreen(0);
+        // Init speech component
+        speech.init(window.settings.tts);
         // Refresh all devices on a given interval
         setInterval(this.loadDevices, window.settings.dashboard.refreshInterval);
         // IPC
         electron.ipcRenderer.on('device-update', (event, data) => {
-            // If we have a valid comment, put it in the event bubble.
+            // If we have a valid comment, put it in the event bubble and do chime/speech notification.
             if (data.comment) {
                 this.addEvent(data.comment);
+                const devspec = window.settings.dashboard.notifications[data.device.capability];
+                const valspec = devspec ? devspec[data.value] : null;
+                if (valspec) {
+                    player.play(valspec.chime, err => {
+                        if (err) console.log(`Could not play chime: ${err}`);
+                        if (valspec.speech) speech.speak({ text: data.comment });
+                    });
+                }
             }
             // If we can find the device, update it.
             if (this.devicesById[data.device.id]) {
@@ -300,6 +314,13 @@ export default {
             // If we have a valid comment, put it in the event bubble.
             if (data.comment) {
                 this.addEvent(data.comment);
+            }
+            // If we have a valid message, speak it.
+            if (data.message) {
+                player.play(window.settings.dashboard.notifications.message.chime, err => {
+                    if (err) console.log(`Could not play chime: ${err}`);
+                    speech.speak({ text: data.message });
+                });
             }
         });
     }

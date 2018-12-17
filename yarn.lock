@@ -3778,6 +3778,13 @@ find-cache-dir@^2.0.0:
     make-dir "^1.0.0"
     pkg-dir "^3.0.0"
 
+find-exec@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/find-exec/-/find-exec-1.0.0.tgz#65249cd524de08050531d9d0b84ad2ee1ab727c9"
+  integrity sha1-ZSSc1STeCAUFMdnQuErS7hq3J8k=
+  dependencies:
+    sync-exec "^0.6.2"
+
 find-npm-prefix@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/find-npm-prefix/-/find-npm-prefix-1.0.2.tgz#8d8ce2c78b3b4b9e66c8acc6a37c231eb841cfdf"
@@ -6762,6 +6769,13 @@ pkg-dir@^3.0.0:
   dependencies:
     find-up "^3.0.0"
 
+play-sound@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/play-sound/-/play-sound-1.1.2.tgz#aaca3047692af571c0d3a9dc475a5fa7c21322c5"
+  integrity sha1-qsowR2kq9XHA06ncR1pfp8ITIsU=
+  dependencies:
+    find-exec "1.0.0"
+
 plist@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/plist/-/plist-3.0.1.tgz#a9b931d17c304e8912ef0ba3bdd6182baf2e1f8c"
@@ -8199,6 +8213,13 @@ spdy@^3.4.1:
     select-hose "^2.0.0"
     spdy-transport "^2.0.18"
 
+speak-tts@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/speak-tts/-/speak-tts-2.0.6.tgz#0b81e76de733f417e50294b593c64532760ca370"
+  integrity sha512-Q31i5QVEbizRfyUp83ztBXeN8gs7ILP9jZQwL/nRwEoMfvtkxUTAv98bNm9Y7OgrXZcYtflFF09sQN+V0v70lQ==
+  dependencies:
+    lodash "^4.17.11"
+
 spectron@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/spectron/-/spectron-4.0.0.tgz#640bcc5d96e1295971e28d585e301b76e0a93033"
@@ -8483,6 +8504,11 @@ svgo@^1.0.0:
     stable "~0.1.6"
     unquote "~1.1.1"
     util.promisify "~1.0.0"
+
+sync-exec@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/sync-exec/-/sync-exec-0.6.2.tgz#717d22cc53f0ce1def5594362f3a89a2ebb91105"
+  integrity sha1-cX0izFPwzh3vVZQ2LzqJouu5EQU=
 
 table@4.0.2:
   version "4.0.2"

@@ -47,6 +47,9 @@ srv.post('/api/:type', (req, res) => {
     try {
         const data = req.body;
         data.comment = `${data.device.name} is ${data.value}.`;
+        if (data.device.capability === 'presence') {
+            data.comment = `${data.device.name} has ${data.device.value === 'present' ? 'arrived' : 'left'}.`;
+        }
         win.webContents.send('device-update', data);
     } catch (err) {
         console.log('Error. ' + err);

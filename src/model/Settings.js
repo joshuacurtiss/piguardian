@@ -60,9 +60,38 @@ const DEFAULTS = {
         'uri': null,
         'token': null
     },
+    'tts': {
+        'lang': 'en-US',
+        'volume': 0.7,
+        'voice': 'Samantha'
+    },
     'dashboard': {
         'refreshInterval': 3600000,
-        'ttsUri': 'http://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=En-us&q=',
+        'notifications': {
+            'message': {
+                'chime': null
+            },
+            'contact': {
+                'open': {
+                    'chime': null,
+                    'speech': false
+                },
+                'closed': {
+                    'chime': null,
+                    'speech': false
+                }
+            },
+            'presence': {
+                'present': {
+                    'chime': null,
+                    'speech': false
+                },
+                'not present': {
+                    'chime': null,
+                    'speech': false
+                }
+            }
+        },
         'customScreens': {
             'My Devices': []
         },
