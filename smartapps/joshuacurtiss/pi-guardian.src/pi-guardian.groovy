@@ -134,7 +134,14 @@ def getDeviceProps(device) {
 }
 
 def getAlarmSystemStatusProps(shm) {
-	return [id:shm.locationId.toString()+"-"+shm.name,value:shm.value,device:shm.name,name:shm.displayName,battery:null]
+	return [
+        id:shm.locationId.toString()+"-"+shm.name,
+        value:shm.value,
+        device:shm.name,
+        name:shm.displayName,
+        capability:"shm",
+        battery:null
+    ]
 }
 
 def getEventProps(evt) {
