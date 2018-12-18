@@ -190,11 +190,11 @@ export default {
 }
 .countdown > div {
     position: absolute;
-    top: 23vh;
+    top: 26vh;
     left: 1vw;
     width: 53vw;
     color: #333;
-    font-size: 26vh;
+    font-size: 23vh;
 }
 .keypad form {
     width: 250px;
