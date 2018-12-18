@@ -42,6 +42,21 @@ srv.post('/api/message', (req, res) => {
     res.send(`Thanks for your message! ${JSON.stringify(req.body)}`);
 });
 
+srv.post('/api/keypad', (req, res) => {
+    var data = req.body;
+    var code = data.code || '';
+    win.webContents.send('keypad-update', data);
+    console.log('Set keypad code to ' + code + '.');
+    res.send('Setting keypad code.');
+});
+
+srv.post('/api/intrusion', (req, res) => {
+    var data = req.body;
+    win.webContents.send('intrusion-update', data);
+    console.log('Intrusion status is ' + data.value + '.');
+    res.send('Intrusion status: ' + data.value + '.');
+});
+
 srv.post('/api/:type', (req, res) => {
     const type = req.params.type;
     try {

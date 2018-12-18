@@ -13,11 +13,8 @@
             @click='resetClockTimeout()'
         />
         <keypad
-            :maxlength='4'
-            :countdown='30'
             :active='showAlarmKeypad'
             @input='showAlarmKeypad=false'
-            @alarm='handleAlarm()'
         />
     </div>
 </template>
@@ -61,6 +58,14 @@ export default {
                 this.splashMessage = '';
                 this.ready = true;
                 this.resetClockTimeout();
+                // Check initial state of intrusion. Display alarm keypad if it is on.
+                this.$http.get(window.settings.smartthings.uri + '/shm/intrusion', {
+                    headers: {
+                        'Authorization': 'Bearer ' + window.settings.smartthings.token
+                    }
+                }).then(response => {
+                    this.showAlarmKeypad = (response.body && response.body.value === 'on');
+                });
             } else {
                 // No configs. Show IP address to get started (or connect to network msg).
                 const ipaddr = ip.address();
@@ -72,9 +77,6 @@ export default {
                 // Try again in a little bit.
                 setTimeout(this.checkReady, 1000);
             }
-        },
-        handleAlarm () {
-            console.log('Alarm!');
         },
         resetClockTimeout () {
             this.showClock = false;
@@ -114,7 +116,10 @@ export default {
         // IPC
         electron.ipcRenderer.on('device-update', (event, data) => {
             this.resetClockTimeout();
-            // TODO: Initiate screen notification for some devices.
+        });
+        electron.ipcRenderer.on('intrusion-update', (event, data) => {
+            this.resetClockTimeout();
+            this.showAlarmKeypad = (data.value === 'on');
         });
     }
 };

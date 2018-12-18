@@ -10,7 +10,7 @@
                     {{ currCountdown }}
                 </div>
             </div>
-            <form>
+            <form :class='{"shake":passcodeFull && !passcodeValid}'>
                 <h1>Enter Passcode</h1>
                 <div class="passcodeui">
                     <font-awesome-icon
@@ -33,38 +33,49 @@
                 <button type="button" @click='addDigit(0)'>0</button>
                 <button type="button" @click='deleteDigit()' class='function'>delete</button>
             </form>
+            <audio :src="warnSoundUrl" loop="true" ref="warn"></audio>
+            <audio :src="alarmSoundUrl" loop="true" ref="alarm"></audio>
         </div>
     </transition>
 </template>
 
 <script>
+import electron from 'electron';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faBell, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons';
 library.add(faBell, faCircle, faCircleThin);
+
 export default {
     name: 'Keypad',
     components: {
         FontAwesomeIcon
     },
     props: {
-        active: Boolean,
-        countdown: {
-            type: Number,
-            default: 60
-        },
-        maxlength: {
-            type: Number,
-            default: 4
-        }
+        active: Boolean
     },
     computed: {
         alarm () {
             return this.currCountdown === 0;
         },
+        maxlength () {
+            return window.settings.keypad.passcodeLength;
+        },
         passcodeFull () {
-            return this.passcode.length >= this.maxlength;
+            return this.passcode.length >= window.settings.keypad.passcodeLength;
+        },
+        passcodeSettings () {
+            return window.settings.keypad.passcodes[this.passcode];
+        },
+        passcodeValid () {
+            return window.settings.keypad.passcodes.hasOwnProperty(this.passcode);
+        },
+        alarmSoundUrl () {
+            return 'file://' + window.settings.keypad.alarmSound;
+        },
+        warnSoundUrl () {
+            return 'file://' + window.settings.keypad.warnSound;
         }
     },
     data () {
@@ -80,8 +91,12 @@ export default {
         checkCountdown () {
             if (this.active) {
                 this.currCountdown -= 1;
-                if (this.currCountdown > 0) setTimeout(this.checkCountdown, 1000);
-                else this.$emit('alarm');
+                if (this.currCountdown > 0) {
+                    setTimeout(this.checkCountdown, 1000);
+                } else {
+                    this.$refs.warn.pause();
+                    this.$refs.alarm.play();
+                }
             }
         },
         clearDigits () {
@@ -94,14 +109,40 @@ export default {
     watch: {
         active (newval) {
             if (newval) {
-                this.currCountdown = this.countdown + 1;
+                this.currCountdown = window.settings.keypad.countdown + 1;
                 this.passcode = '';
                 this.checkCountdown();
+                this.$refs.warn.play();
+            } else {
+                this.$refs.alarm.pause();
+                this.$refs.warn.pause();
             }
         },
         passcode (newval) {
-            if (this.passcodeFull) this.$emit('input', this.passcode);
+            if (this.passcodeValid) {
+                // Passcode was right!
+                if (this.passcodeSettings.action) this.$http.get(this.passcodeSettings.action);
+                this.$http.post(window.settings.smartthings.uri + '/shm/intrusion', {
+                    value: 'off'
+                }, {
+                    headers: {
+                        'Authorization': 'Bearer ' + window.settings.smartthings.token
+                    }
+                });
+                this.$emit('input', this.passcode);
+            } else if (this.passcodeFull) {
+                // Wrong. Shake your head and clear the passcode.
+                setTimeout(() => {
+                    this.passcode = '';
+                }, 999);
+            }
         }
+    },
+    beforeCreate () {
+        // IPC
+        electron.ipcRenderer.on('keypad-update', (event, data) => {
+            this.passcode = (data.code || '').replace(/[^0-9]/g, '');
+        });
     }
 };
 </script>
@@ -124,6 +165,18 @@ export default {
     0% {color: white;}
     50% {color: yellow;}
     100% {color: white;}
+}
+.shake {
+    animation: shake 0.9s cubic-bezier(.36,.07,.19,.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+@keyframes shake {
+    10%, 90% {transform: translate3d(-2px, 0, 0);}
+    20%, 80% {transform: translate3d(3px, 0, 0);}
+    30%, 50%, 70% {transform: translate3d(-6px, 0, 0);}
+    40%, 60% {transform: translate3d(6px, 0, 0);}
 }
 .countdown {
     position: absolute;
