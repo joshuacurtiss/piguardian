@@ -107,12 +107,7 @@ export default {
             }
         }
     },
-    mounted () {
-        // Startup work
-        this.startup();
-        // Try to check for readiness after 2.6sec.
-        // That's when the splash screen animation is complete.
-        setTimeout(this.checkReady, 2600);
+    beforeCreate () {
         // IPC
         electron.ipcRenderer.on('device-update', (event, data) => {
             this.resetClockTimeout();
@@ -121,6 +116,13 @@ export default {
             this.resetClockTimeout();
             this.showAlarmKeypad = (data.value === 'on');
         });
+    },
+    mounted () {
+        // Startup work
+        this.startup();
+        // Try to check for readiness after 2.6sec.
+        // That's when the splash screen animation is complete.
+        setTimeout(this.checkReady, 2600);
     }
 };
 </script>
