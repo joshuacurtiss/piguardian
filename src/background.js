@@ -85,14 +85,7 @@ protocol.registerStandardSchemes(['app'], { secure: true });
  */
 function createWindow () {
     // Create the browser window.
-    win = new BrowserWindow({
-        backgroundColor: '#000',
-        width: isDevelopment ? 1400 : 800,
-        height: isDevelopment ? 600 : 480,
-        webPreferences: {
-            webSecurity: false
-        }
-    });
+    win = new BrowserWindow(settings.windowOptions);
 
     if (isDevelopment || process.env.IS_TEST) {
     // Load the url of the dev server if in development mode

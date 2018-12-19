@@ -43,6 +43,17 @@ export default class Settings {
 }
 
 const DEFAULTS = {
+    'windowOptions': {
+        'fullscreen': true,
+        'backgroundColor': '#000000',
+        'autoHideMenuBar': true,
+        'alwaysOnTop': true,
+        'width': 800,
+        'height': 480,
+        'webPreferences': {
+            'webSecurity': false
+        }
+    },
     'keypad': {
         'alarmSound': null,
         'countdown': 60,
