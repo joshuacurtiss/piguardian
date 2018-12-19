@@ -102,6 +102,9 @@ function createWindow () {
     });
 }
 
+// Enable speech synthesis
+app.commandLine.appendSwitch('enable-speech-dispatcher');
+
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
     // On macOS it is common for applications and their menu bar
