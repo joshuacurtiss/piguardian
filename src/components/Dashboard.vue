@@ -288,7 +288,23 @@ export default {
     mounted () {
         this.handleChangeScreen(0);
         // Init speech component
-        speech.init(window.settings.tts);
+        speech.init().then(data => {
+            if (data) {
+                console.table(data.voices);
+                speech.setVolume(window.settings.tts.volume);
+                const tts = window.settings.tts;
+                // First find the voice that matches lang/name in settings.
+                let voice = data.voices.find(voice => voice.lang === tts.lang && voice.name === tts.voice);
+                // If not found, find the first voice in the right language.
+                if (!voice) voice = data.voices.find(voice => voice.lang === tts.lang);
+                // If we found something, set it.
+                if (voice) {
+                    console.log(voice);
+                    speech.setLanguage(voice.lang);
+                    speech.setVoice(voice.name);
+                }
+            }
+        });
         // Refresh all devices on a given interval
         setInterval(this.loadDevices, window.settings.dashboard.refreshInterval);
         // IPC
