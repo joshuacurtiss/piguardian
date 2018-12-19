@@ -102,6 +102,8 @@
 import DashboardClock from './DashboardClock.vue';
 import DashboardEventBubble from './DashboardEventBubble.vue';
 import Event from '../model/Event';
+// Screens
+import DebugVoiceScreen from './screens/DebugVoiceScreen.vue';
 // Widgets
 import ContactWidget from './widgets/ContactWidget.vue';
 import LockWidget from './widgets/LockWidget.vue';
@@ -143,6 +145,7 @@ export default {
         ContactWidget,
         DashboardClock,
         DashboardEventBubble,
+        DebugVoiceScreen,
         FontAwesomeIcon,
         LockWidget,
         PresenceWidget,
