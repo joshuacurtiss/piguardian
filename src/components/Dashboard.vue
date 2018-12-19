@@ -34,9 +34,9 @@
                                     ></component>
                                 </ul>
                             </div>
-                            <div v-else-if='typeof activeDeviceScreens[i] === "Object" && componentExists(activeDeviceScreens[i].component || "")'>
+                            <div v-else-if='typeof activeDeviceScreens[i] === "object" && componentExists(activeDeviceScreens[i].component || "")'>
                                 <component
-                                    v-bind:is='activeDeviceScreens[i].object'
+                                    v-bind:is='activeDeviceScreens[i].component'
                                 ></component>
                             </div>
                             <div v-else>
@@ -59,9 +59,9 @@
                                     ></component>
                                 </ul>
                             </div>
-                            <div v-else-if='typeof activeCustomScreens[i] === "Object" && componentExists(activeCustomScreens[i].component || "")'>
+                            <div v-else-if='typeof activeCustomScreens[i] === "object" && componentExists(activeCustomScreens[i].component || "")'>
                                 <component
-                                    v-bind:is='activeCustomScreens[i].object'
+                                    v-bind:is='activeCustomScreens[i].component'
                                 ></component>
                             </div>
                             <div v-else>
