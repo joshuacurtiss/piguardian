@@ -55,13 +55,19 @@ const DEFAULTS = {
         }
     },
     'keypad': {
-        'alarmSound': null,
+        'alarm': {
+            'chime': null,
+            'volume': 1
+        },
+        'warn': {
+            'chime': null,
+            'volume': 1
+        },
         'countdown': 60,
         'passcodeLength': 4,
         'passcodes': {
             '1234': { 'name': 'Default', 'action': null }
-        },
-        'warnSound': null
+        }
     },
     'server': {
         'address': null,

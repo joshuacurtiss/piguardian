@@ -33,8 +33,8 @@
                 <button type="button" @click='addDigit(0)'>0</button>
                 <button type="button" @click='deleteDigit()' class='function'>delete</button>
             </form>
-            <audio :src="warnSoundUrl" loop="true" ref="warn"></audio>
-            <audio :src="alarmSoundUrl" loop="true" ref="alarm"></audio>
+            <audio :src="warnUrl" loop="true" ref="warn"></audio>
+            <audio :src="alarmUrl" loop="true" ref="alarm"></audio>
         </div>
     </transition>
 </template>
@@ -71,11 +71,11 @@ export default {
         passcodeValid () {
             return window.settings.keypad.passcodes.hasOwnProperty(this.passcode);
         },
-        alarmSoundUrl () {
-            return 'file://' + window.settings.keypad.alarmSound;
+        alarmUrl () {
+            return 'file://' + window.settings.keypad.alarm.chime;
         },
-        warnSoundUrl () {
-            return 'file://' + window.settings.keypad.warnSound;
+        warnUrl () {
+            return 'file://' + window.settings.keypad.warn.chime;
         }
     },
     data () {
@@ -143,6 +143,10 @@ export default {
         electron.ipcRenderer.on('keypad-update', (event, data) => {
             this.passcode = (data.code || '').replace(/[^0-9]/g, '');
         });
+    },
+    mounted () {
+        this.$refs.alarm.volume = window.settings.keypad.alarm.volume;
+        this.$refs.warn.volume = window.settings.keypad.warn.volume;
     }
 };
 </script>
