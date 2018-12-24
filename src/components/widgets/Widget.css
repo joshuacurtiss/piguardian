@@ -11,6 +11,10 @@
 }
 .widget:hover {
     filter: brightness(120%);
+    animation: widgetpress 0.6s;
+}
+@keyframes widgetpress {
+    50% {transform: scale(1.08);}
 }
 .widget h1 {
     margin: 0;
