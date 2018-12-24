@@ -293,7 +293,6 @@ export default {
         // Init speech component
         speech.init().then(data => {
             if (data) {
-                console.table(data.voices);
                 speech.setVolume(window.settings.tts.volume);
                 const tts = window.settings.tts;
                 // First find the voice that matches lang/name in settings.
@@ -302,7 +301,6 @@ export default {
                 if (!voice) voice = data.voices.find(voice => voice.lang === tts.lang);
                 // If we found something, set it.
                 if (voice) {
-                    console.log(voice);
                     speech.setLanguage(voice.lang);
                     speech.setVoice(voice.name);
                 }
