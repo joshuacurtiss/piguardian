@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import { merge } from 'lodash';
 
 export default class Settings {
     constructor (path) {
@@ -21,7 +22,7 @@ export default class Settings {
             if (this.path.length) {
                 // Some code expects this to be synchronous. Check things before changing this.
                 const state = fs.readJsonSync(this.path);
-                Object.assign(this, state);
+                merge(this, state);
             }
         } catch (e) {
             console.error('Failed while trying to load settings!', e.message);
@@ -65,9 +66,7 @@ const DEFAULTS = {
         },
         'countdown': 60,
         'passcodeLength': 4,
-        'passcodes': {
-            '1234': { 'name': 'Default', 'action': null }
-        }
+        'passcodes': {}
     },
     'server': {
         'address': null,
