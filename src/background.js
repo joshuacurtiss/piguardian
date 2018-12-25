@@ -29,7 +29,7 @@ srv.use((req, res, next) => {
     next();
 });
 
-srv.use(express.static('web'));
+srv.use(express.static(path.join(__dirname, '..', 'web')));
 
 srv.post('/api/message', (req, res) => {
     try {
