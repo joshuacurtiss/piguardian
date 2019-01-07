@@ -28,6 +28,7 @@
 .widget .icon {
     font-size: 11vh;
     margin: 5vh 0 0 6.1vw;
+    transition: opacity 0.3s;
 }
 .widget .details {
     font-size: 2vh;
