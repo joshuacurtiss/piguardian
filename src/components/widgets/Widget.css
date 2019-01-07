@@ -14,18 +14,24 @@
     transform: scale(1.08);
     transition: all 0.3s;
 }
+.widget h1,
+.widget .icon,
+.widget .details {
+    position: absolute;
+}
 .widget h1 {
+    width: 16.4vw;
     margin: 0;
     font-size: 2.4vh;
     font-weight: normal;
 }
 .widget .icon {
     font-size: 11vh;
-    margin: 2vh 0 0 6.1vw;
+    margin: 5vh 0 0 6.1vw;
 }
 .widget .details {
     font-size: 2vh;
-    margin-top: 2vh;
+    margin-top: 18vh;
 }
 .widget .details svg {
     margin-right: 0.4vw;
