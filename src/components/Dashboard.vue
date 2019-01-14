@@ -113,7 +113,6 @@ import UnknownWidget from './widgets/UnknownWidget.vue';
 // Miscellaneous
 import electron from 'electron';
 import PlaySound from 'play-sound';
-import Speech from 'speak-tts';
 import { Swipe, SwipeItem } from 'vue-swipe';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -138,7 +137,6 @@ const CAPABILITIES = {
     }
 };
 const player = new PlaySound();
-const speech = new Speech();
 export default {
     name: 'dashboard',
     components: {
@@ -181,6 +179,7 @@ export default {
         },
         topActiveEvent () {
             if (this.activeEvents.length) return this.activeEvents[0];
+            else return null;
         },
         activeEvents () {
             return this.events.filter(evt => evt.active);
@@ -290,22 +289,6 @@ export default {
     },
     mounted () {
         this.handleChangeScreen(0);
-        // Init speech component
-        speech.init().then(data => {
-            if (data) {
-                speech.setVolume(window.settings.tts.volume);
-                const tts = window.settings.tts;
-                // First find the voice that matches lang/name in settings.
-                let voice = data.voices.find(voice => voice.lang === tts.lang && voice.name === tts.voice);
-                // If not found, find the first voice in the right language.
-                if (!voice) voice = data.voices.find(voice => voice.lang === tts.lang);
-                // If we found something, set it.
-                if (voice) {
-                    speech.setLanguage(voice.lang);
-                    speech.setVoice(voice.name);
-                }
-            }
-        });
         // Refresh all devices on a given interval
         setInterval(this.loadDevices, window.settings.dashboard.refreshInterval);
         // IPC
@@ -318,7 +301,7 @@ export default {
                 if (valspec) {
                     player.play(valspec.chime, err => {
                         if (err) console.log(`Could not play chime: ${err}`);
-                        if (valspec.speech) speech.speak({ text: data.comment });
+                        if (valspec.speech) electron.ipcRenderer.send('speak', data.comment);
                     });
                 }
             }
@@ -336,7 +319,7 @@ export default {
             if (data.message) {
                 player.play(window.settings.dashboard.notifications.message.chime, err => {
                     if (err) console.log(`Could not play chime: ${err}`);
-                    speech.speak({ text: data.message });
+                    electron.ipcRenderer.send('speak', data.message);
                 });
             }
         });

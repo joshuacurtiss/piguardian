@@ -77,9 +77,7 @@ const DEFAULTS = {
         'token': null
     },
     'tts': {
-        'lang': 'en-US',
-        'volume': 0.7,
-        'voice': 'Samantha'
+        'uri': 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=En-us&q='
     },
     'dashboard': {
         'refreshInterval': 3600000,

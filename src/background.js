@@ -1,10 +1,11 @@
 'use strict';
 
-import { app, protocol, BrowserWindow } from 'electron';
+import { app, ipcMain, protocol, BrowserWindow } from 'electron';
 import bodyParser from 'body-parser';
 import express from 'express';
 import path from 'path';
 import Settings from './model/Settings';
+import Speech from './util/Speech';
 import {
     createProtocol,
     installVueDevtools
@@ -13,7 +14,9 @@ import {
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const APPDATADIR = app.getPath('userData');
 const SETTINGSPATH = path.join(APPDATADIR, 'state.json');
+const TTSCACHEDIR = path.join(APPDATADIR, 'ttscache');
 const settings = new Settings(SETTINGSPATH);
+const speech = new Speech(settings.tts.uri, TTSCACHEDIR);
 const srv = express();
 let win;
 
@@ -81,6 +84,14 @@ srv.listen(settings.server.port, () => {
 protocol.registerStandardSchemes(['app'], { secure: true });
 
 /**
+ * IPC handlers
+ */
+
+ipcMain.on('speak', (event, data) => {
+    speech.speak(data);
+});
+
+/**
  * Instantiates the main app window.
  */
 function createWindow () {
@@ -101,9 +112,6 @@ function createWindow () {
         win = null;
     });
 }
-
-// Enable speech synthesis
-app.commandLine.appendSwitch('enable-speech-dispatcher');
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {

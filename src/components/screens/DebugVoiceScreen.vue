@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import Speech from 'speak-tts';
 export default {
     name: 'voice-screen',
     data () {
@@ -21,12 +20,6 @@ export default {
         };
     },
     mounted () {
-        const speech = new Speech();
-        speech.init().then(data => {
-            if (data) {
-                this.voices = data.voices;
-            }
-        });
     }
 };
 </script>
