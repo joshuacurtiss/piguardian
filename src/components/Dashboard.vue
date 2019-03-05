@@ -301,7 +301,7 @@ export default {
                 if (valspec) {
                     player.play(valspec.chime, err => {
                         if (err) console.log(`Could not play chime: ${err}`);
-                        if (valspec.speech) electron.ipcRenderer.send('speak', data.comment);
+                        if (valspec.speech) window.speech.speak(data.comment);
                     });
                 }
             }
@@ -319,7 +319,7 @@ export default {
             if (data.message) {
                 player.play(window.settings.dashboard.notifications.message.chime, err => {
                     if (err) console.log(`Could not play chime: ${err}`);
-                    electron.ipcRenderer.send('speak', data.message);
+                    window.speech.speak(data.message);
                 });
             }
         });

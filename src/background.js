@@ -5,7 +5,6 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import path from 'path';
 import Settings from './model/Settings';
-import Speech from './util/Speech';
 import {
     createProtocol,
     installVueDevtools
@@ -14,9 +13,7 @@ import {
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const APPDATADIR = app.getPath('userData');
 const SETTINGSPATH = path.join(APPDATADIR, 'state.json');
-const TTSCACHEDIR = path.join(APPDATADIR, 'ttscache');
 const settings = new Settings(SETTINGSPATH);
-const speech = new Speech(settings.tts.uri, TTSCACHEDIR);
 const srv = express();
 let win;
 
@@ -82,14 +79,6 @@ srv.listen(settings.server.port, () => {
 
 // Standard scheme must be registered before the app is ready
 protocol.registerStandardSchemes(['app'], { secure: true });
-
-/**
- * IPC handlers
- */
-
-ipcMain.on('speak', (event, data) => {
-    speech.speak(data);
-});
 
 /**
  * Instantiates the main app window.
