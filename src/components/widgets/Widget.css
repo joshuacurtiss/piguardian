@@ -33,6 +33,7 @@
 .widget .details {
     font-size: 2vh;
     margin-top: 18vh;
+    width: 16.5vw;
 }
 .widget .details svg {
     margin-right: 0.4vw;

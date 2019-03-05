@@ -10,6 +10,7 @@
             :icon='["fas","lightbulb"]'
         />
         <div class='details'>
+            <level-indicator v-show='on' v-model='level' />
             <battery-indicator v-model='battery' />
             {{ details }}
         </div>
@@ -18,6 +19,7 @@
 
 <script>
 import BatteryIndicator from './BatteryIndicator.vue';
+import LevelIndicator from './LevelIndicator.vue';
 import Widget from './Widget';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -28,7 +30,8 @@ export default {
     mixins: [ Widget ],
     components: {
         BatteryIndicator,
-        FontAwesomeIcon
+        FontAwesomeIcon,
+        LevelIndicator
     },
     data () {
         return {
