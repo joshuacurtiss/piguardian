@@ -15,16 +15,19 @@ export default class Speech {
         return this;
     }
     speak (text) {
-        console.log(`Speak: "${text}"`);
         const speechPath = this.convertToPath(text);
         if (fs.existsSync(speechPath)) {
+            console.log(`Speak: "${text}"`);
             player.play(speechPath, err => {
                 if (err) console.log(`Could not play speech: ${speechPath}`);
             });
         } else {
             const speechUri = this.convertToUri(text);
+            console.log(`Download "${speechUri}" and speak: "${text}"`);
             this.download(speechUri, speechPath, () => {
-                this.speak(text);
+                player.play(speechPath, err => {
+                    if (err) console.log(`Could not play speech: ${speechPath}`);
+                });
             });
         }
     }
