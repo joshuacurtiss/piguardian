@@ -12,7 +12,7 @@ const SETTINGSPATH = path.join(APPDATADIR, 'state.json');
 const TTSCACHEDIR = path.join(APPDATADIR, 'ttscache');
 
 window.settings = new Settings(SETTINGSPATH);
-window.speech = new Speech(settings.tts.uri, TTSCACHEDIR);
+window.speech = new Speech(window.settings.tts.uri, TTSCACHEDIR);
 
 Vue.config.productionTip = false;
 Vue.use(ToggleButton);
