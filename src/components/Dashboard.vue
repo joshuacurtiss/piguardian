@@ -347,6 +347,7 @@ export default {
 /* Header */
 header {
     height: 5vh;
+    user-select: none;
 }
 header div {
     font-size: 3vh;
@@ -392,6 +393,7 @@ footer {
     height: 9vh;
     width: 100vw;
     bottom: 0;
+    user-select: none;
 }
 footer .logo {
     height: 6vh;

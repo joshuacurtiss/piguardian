@@ -8,6 +8,7 @@
     height: 21vh;
     width: 16.7vw;
     cursor: pointer;
+    user-select: none;
 }
 .widget:active {
     filter: brightness(120%);
