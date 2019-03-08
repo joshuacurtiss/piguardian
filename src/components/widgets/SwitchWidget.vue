@@ -2,7 +2,9 @@
     <li class='widget'
         :class='{dim}'
         :style='style'
+        v-long-press="1300"
         @click='click'
+        @long-press-start="longPress"
     >
         <h1>{{ title }}</h1>
         <font-awesome-icon
@@ -20,6 +22,7 @@
 <script>
 import BatteryIndicator from './BatteryIndicator.vue';
 import LevelIndicator from './LevelIndicator.vue';
+import LongPress from 'vue-directive-long-press';
 import Widget from './Widget';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -33,6 +36,9 @@ export default {
         FontAwesomeIcon,
         LevelIndicator
     },
+    directives: {
+        'long-press': LongPress
+    },
     data () {
         return {
             style: {
@@ -43,6 +49,9 @@ export default {
     methods: {
         click () {
             this.$emit('change', this.value, this.state === 'on' ? 'off' : 'on');
+        },
+        longPress () {
+            console.log(`Long press on ${this.title}.`);
         }
     }
 };
