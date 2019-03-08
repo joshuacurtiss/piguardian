@@ -1,6 +1,6 @@
 'use strict';
 
-import { app, ipcMain, protocol, BrowserWindow } from 'electron';
+import { app, protocol, BrowserWindow } from 'electron';
 import bodyParser from 'body-parser';
 import express from 'express';
 import path from 'path';
