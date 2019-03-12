@@ -37,6 +37,7 @@
                             <div v-else-if='typeof activeDeviceScreens[i] === "object" && componentExists(activeDeviceScreens[i].component || "")'>
                                 <component
                                     v-bind:is='activeDeviceScreens[i].component'
+                                    v-model='activeDeviceScreens[i]'
                                 ></component>
                             </div>
                             <div v-else>
@@ -62,6 +63,7 @@
                             <div v-else-if='typeof activeCustomScreens[i] === "object" && componentExists(activeCustomScreens[i].component || "")'>
                                 <component
                                     v-bind:is='activeCustomScreens[i].component'
+                                    v-model='activeCustomScreens[i]'
                                 ></component>
                             </div>
                             <div v-else>
@@ -103,6 +105,7 @@ import DashboardClock from './DashboardClock.vue';
 import DashboardEventBubble from './DashboardEventBubble.vue';
 import Event from '../model/Event';
 // Screens
+import DailyScriptureScreen from './screens/DailyScriptureScreen.vue';
 import DebugVoiceScreen from './screens/DebugVoiceScreen.vue';
 // Widgets
 import ContactWidget from './widgets/ContactWidget.vue';
@@ -141,6 +144,7 @@ export default {
     name: 'dashboard',
     components: {
         ContactWidget,
+        DailyScriptureScreen,
         DashboardClock,
         DashboardEventBubble,
         DebugVoiceScreen,
