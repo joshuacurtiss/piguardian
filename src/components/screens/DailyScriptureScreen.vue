@@ -13,10 +13,15 @@ export default {
             content: 'Loading...'
         };
     },
-    props: ['value'],
+    props: {
+        value: {
+            type: Object,
+            default: function () {}
+        }
+    },
     computed: {
         uri () {
-            return this.value.uri;
+            return this.value.uri || 'https://wol.jw.org/en/wol/dt/r1/lp-e/';
         }
     },
     mounted () {
