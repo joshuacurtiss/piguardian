@@ -4,13 +4,15 @@
 
 <script>
 import cheerio from 'cheerio';
+import moment from 'moment';
 const DATEKEY = 'piguardian.dailyscripture.date';
 const CONTENTKEY = 'piguardian.dailyscripture.content';
 export default {
     name: 'daily-scripture-screen',
     data () {
         return {
-            content: 'Loading...'
+            content: 'Loading...',
+            timer: null
         };
     },
     props: {
@@ -24,15 +26,22 @@ export default {
             return this.value.uri || 'https://wol.jw.org/en/wol/dt/r1/lp-e/';
         }
     },
-    mounted () {
-        var date = new Date();
-        var dateFmt = date.getFullYear() + '/' + date.toLocaleDateString('en-US', {
-            month: 'numeric',
-            day: 'numeric'
-        });
-        if (localStorage[DATEKEY] === dateFmt && localStorage[CONTENTKEY]) {
-            this.content = localStorage[CONTENTKEY];
-        } else {
+    methods: {
+        check () {
+            console.log('Checking Daily Scripture...');
+            const bufferms = 1500;
+            const dateFmt = moment().format('YYYY/M/D');
+            const timeToTomorrow = moment().endOf('day').valueOf() - moment().valueOf() + bufferms;
+            clearTimeout(this.timer);
+            this.timer = setTimeout(this.check, timeToTomorrow);
+            if (localStorage[DATEKEY] === dateFmt && localStorage[CONTENTKEY]) {
+                this.content = localStorage[CONTENTKEY];
+            } else {
+                this.download(dateFmt);
+            }
+        },
+        download (dateFmt) {
+            console.log('Download the Daily Scripture...');
             this.$http.get(this.uri + dateFmt).then(response => {
                 if (response.body) {
                     const $ = cheerio.load(response.body);
@@ -44,6 +53,9 @@ export default {
                 console.error(exception);
             });
         }
+    },
+    mounted () {
+        this.check();
     }
 };
 </script>
@@ -57,7 +69,7 @@ export default {
     display: none;
 }
 .dailyscriptureContainer .themeScrp {
-    padding: 5vh 0 3vh;
+    padding: 3vh 0;
 }
 .dailyscriptureContainer a {
     pointer-events: none;
