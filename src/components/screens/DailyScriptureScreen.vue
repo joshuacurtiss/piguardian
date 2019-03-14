@@ -1,16 +1,34 @@
 <template>
-    <div class="dailyscriptureContainer" v-html="content"></div>
+    <div class="dailyscriptureContainer">
+        <font-awesome-icon
+            icon="volume-up"
+            :mask="['fas', 'comment']"
+            transform="shrink-8 left-0.3 up-0.5"
+            @click="read"
+        />
+        <p class="themeScrp" v-html="themeScrp" ref="themeScrp" />
+        <div v-html="content" ref="content" />
+    </div>
 </template>
 
 <script>
 import cheerio from 'cheerio';
 import moment from 'moment';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faVolumeUp, faComment } from '@fortawesome/free-solid-svg-icons';
+library.add(faVolumeUp, faComment);
 const DATEKEY = 'piguardian.dailyscripture.date';
+const SCRPKEY = 'piguardian.dailyscripture.themescrp';
 const CONTENTKEY = 'piguardian.dailyscripture.content';
 export default {
     name: 'daily-scripture-screen',
+    components: {
+        FontAwesomeIcon
+    },
     data () {
         return {
+            themeScrp: '',
             content: 'Loading...',
             timer: null
         };
@@ -34,7 +52,8 @@ export default {
             const timeToTomorrow = moment().endOf('day').valueOf() - moment().valueOf() + bufferms;
             clearTimeout(this.timer);
             this.timer = setTimeout(this.check, timeToTomorrow);
-            if (localStorage[DATEKEY] === dateFmt && localStorage[CONTENTKEY]) {
+            if (localStorage[DATEKEY] === dateFmt && localStorage[CONTENTKEY] && localStorage[SCRPKEY]) {
+                this.themeScrp = localStorage[SCRPKEY];
                 this.content = localStorage[CONTENTKEY];
             } else {
                 this.download(dateFmt);
@@ -45,13 +64,23 @@ export default {
             this.$http.get(this.uri + dateFmt).then(response => {
                 if (response.body) {
                     const $ = cheerio.load(response.body);
-                    this.content = $('.itemData').html();
+                    this.themeScrp = $('.themeScrp').html().trim();
+                    this.content = $('.bodyTxt').html().trim();
                     localStorage[DATEKEY] = dateFmt;
                     localStorage[CONTENTKEY] = this.content;
+                    localStorage[SCRPKEY] = this.themeScrp;
                 }
             }).catch((exception) => {
                 console.error(exception);
             });
+        },
+        read () {
+            window.speech.speak(
+                'Daily text for ' +
+                moment(localStorage[DATEKEY]).format('dddd, MMMM Do. ') +
+                this.$refs.themeScrp.textContent.trim() + ' ' +
+                this.$refs.content.textContent.trim()
+            );
         }
     },
     mounted () {
@@ -60,17 +89,22 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .dailyscriptureContainer {
     font-size: 1.1em;
     padding: 0 8vw;
 }
-.dailyscriptureContainer header {
-    display: none;
-}
 .dailyscriptureContainer .themeScrp {
-    padding: 3vh 0;
+    padding: 3vh 0 1vh;
 }
+.dailyscriptureContainer svg {
+    float:right;
+    cursor: pointer;
+    margin: 3vh -5vw 0 3vw;
+    font-size: 10vh;
+}
+</style>
+<style>
 .dailyscriptureContainer a {
     pointer-events: none;
     cursor: default;
