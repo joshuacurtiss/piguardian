@@ -4,8 +4,17 @@
             icon="volume-up"
             :mask="['fas', 'comment']"
             transform="shrink-8 left-0.3 up-0.5"
+            v-show='ready'
             @click="read"
         />
+        <div v-show='!ready' class='loadingIndicator'>
+            <font-awesome-icon
+                icon="circle-notch"
+                transform="left-3"
+                spin
+            />
+            Loading...
+        </div>
         <p class="themeScrp" v-html="themeScrp" ref="themeScrp" />
         <div v-html="content" ref="content" />
     </div>
@@ -16,8 +25,8 @@ import cheerio from 'cheerio';
 import moment from 'moment';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faVolumeUp, faComment } from '@fortawesome/free-solid-svg-icons';
-library.add(faVolumeUp, faComment);
+import { faVolumeUp, faCircleNotch, faComment } from '@fortawesome/free-solid-svg-icons';
+library.add(faVolumeUp, faCircleNotch, faComment);
 const DATEKEY = 'piguardian.dailyscripture.date';
 const SCRPKEY = 'piguardian.dailyscripture.themescrp';
 const CONTENTKEY = 'piguardian.dailyscripture.content';
@@ -28,8 +37,8 @@ export default {
     },
     data () {
         return {
-            themeScrp: '',
-            content: 'Loading...',
+            themeScrp: null,
+            content: null,
             timer: null
         };
     },
@@ -40,6 +49,9 @@ export default {
         }
     },
     computed: {
+        ready () {
+            return this.themeScrp && this.content;
+        },
         uri () {
             return this.value.uri || 'https://wol.jw.org/en/wol/dt/r1/lp-e/';
         }
@@ -90,6 +102,11 @@ export default {
 </script>
 
 <style scoped>
+.loadingIndicator {
+    font-size: 5vh;
+    text-align: center;
+    margin-top: 33vh;
+}
 .dailyscriptureContainer {
     font-size: 1.1em;
     padding: 0 8vw;
@@ -97,7 +114,7 @@ export default {
 .dailyscriptureContainer .themeScrp {
     padding: 3vh 0 1vh;
 }
-.dailyscriptureContainer svg {
+.dailyscriptureContainer > svg {
     float:right;
     cursor: pointer;
     margin: 3vh -5vw 0 3vw;
