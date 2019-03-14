@@ -5,19 +5,37 @@ import splitSentences from 'splitsentences';
 import PlaySound from 'play-sound';
 
 const player = new PlaySound();
+const EXT = 'mp3';
 
 export default class Speech {
     /**
      * Constructor.
      * @param {string} uri The Google TTS URI to use.
      * @param {string} cacheDir Path to store that saved audio files.
+     * @param {number} purgeAgeDays Number of days old a cached file should be before it is purged.
      */
-    constructor (uri, cacheDir) {
+    constructor (uri, cacheDir, purgeAgeDays = 90) {
         this.uri = uri;
         this.cacheDir = cacheDir;
-        // On instantiation we make sure the directory exists.
+        // On instantiation, make sure directory exists and purge old audio files.
+        const extRegex = new RegExp('\\.' + EXT + '$', 'i');
+        const purgeDateMs = new Date().getTime() - purgeAgeDays * 24 * 60 * 60 * 1000;
         fs.mkdir(this.cacheDir, { recursive: true }, err => {
             if (err) console.log('TTS cache dir already exists.');
+            fs.readdir(this.cacheDir, (err, files) => {
+                if (err) console.error(err);
+                files.filter(filename => filename.match(extRegex)).forEach(filename => {
+                    const fullpath = path.join(this.cacheDir, filename);
+                    fs.stat(fullpath, (err, stats) => {
+                        if (err) console.error(err);
+                        if (stats.birthtimeMs < purgeDateMs) {
+                            fs.unlink(fullpath, err => {
+                                if (err) console.error(err);
+                            });
+                        }
+                    });
+                });
+            });
         });
         return this;
     }
@@ -53,7 +71,7 @@ export default class Speech {
     convertToPath (text) {
         return path.join(
             this.cacheDir,
-            text.toLowerCase().replace(/[!?,.;:'"]/g, '').trim().replace(/[^A-Za-z0-9]/g, '-') + '.mp3'
+            text.toLowerCase().replace(/[!?,.;:'"]/g, '').trim().replace(/[^A-Za-z0-9]/g, '-') + '.' + EXT
         );
     }
     /**
