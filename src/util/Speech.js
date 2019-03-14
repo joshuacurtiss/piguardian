@@ -1,6 +1,7 @@
 import fs from 'fs';
 import https from 'https';
 import path from 'path';
+import splitSentences from 'splitsentences';
 import PlaySound from 'play-sound';
 
 const player = new PlaySound();
@@ -14,22 +15,20 @@ export default class Speech {
         });
         return this;
     }
-    speak (text) {
-        const speechPath = this.convertToPath(text);
-        if (fs.existsSync(speechPath)) {
-            console.log(`Speak: "${text}"`);
-            player.play(speechPath, err => {
-                if (err) console.log(`Could not play speech: ${speechPath}`);
-            });
-        } else {
-            const speechUri = this.convertToUri(text);
-            console.log(`Download "${speechUri}" and speak: "${text}"`);
-            this.download(speechUri, speechPath, () => {
-                player.play(speechPath, err => {
-                    if (err) console.log(`Could not play speech: ${speechPath}`);
-                });
-            });
-        }
+    async speak (text) {
+        const snippets = splitSentences(text);
+        for (let snippet of snippets) {
+            const speechPath = this.convertToPath(snippet);
+            if (fs.existsSync(speechPath)) {
+                console.log(`Speak: "${snippet}"`);
+                await this.play(speechPath);
+            } else {
+                const speechUri = this.convertToUri(snippet);
+                console.log(`Download "${speechUri}" and speak: "${snippet}"`);
+                await this.download(speechUri, speechPath);
+                await this.play(speechPath);
+            }
+        };
     }
     convertToUri (text) {
         return this.uri + encodeURIComponent(text);
@@ -37,17 +36,31 @@ export default class Speech {
     convertToPath (text) {
         return path.join(this.cacheDir, text.toLowerCase().trim().replace(/[!?,.;:'"]/g, '').replace(/[^A-Za-z0-9]/g, '-') + '.mp3');
     }
-    download (url, dest, cb) {
-        var file = fs.createWriteStream(dest);
-        https.get(url, function (response) {
-            response.pipe(file);
-            file.on('finish', function () {
-                file.close(cb);
+    play (path) {
+        return new Promise(function (resolve, reject) {
+            player.play(path, err => {
+                if (err) {
+                    console.log(`Could not play speech: ${path}`);
+                    reject(Error(err));
+                } else {
+                    resolve();
+                }
             });
-        }).on('error', function (err) {
-            console.error(err);
-            fs.unlink(dest);
-            if (cb) cb(err.message);
         });
-    };
+    }
+    download (url, dest) {
+        return new Promise(function (resolve, reject) {
+            const file = fs.createWriteStream(dest);
+            https.get(url, function (response) {
+                response.pipe(file);
+                file.on('finish', function () {
+                    file.close(resolve);
+                });
+            }).on('error', function (err) {
+                console.error(err);
+                fs.unlink(dest);
+                reject(Error(err.message));
+            });
+        });
+    }
 }
