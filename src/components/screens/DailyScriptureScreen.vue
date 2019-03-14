@@ -90,6 +90,7 @@ export default {
             window.speech.speak(
                 'Daily text for ' +
                 moment(localStorage[DATEKEY]).format('dddd, MMMM Do. ') +
+                'Theme scripture. ' +
                 this.$refs.themeScrp.textContent.trim() + ' ' +
                 this.$refs.content.textContent.trim()
             );
