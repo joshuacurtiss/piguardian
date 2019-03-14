@@ -29,15 +29,13 @@ export default class Speech {
         const snippets = splitSentences(text);
         for (let snippet of snippets) {
             const speechPath = this.convertToPath(snippet);
-            if (fs.existsSync(speechPath)) {
-                console.log(`Speak: "${snippet}"`);
-                await this.play(speechPath);
-            } else {
+            if (!fs.existsSync(speechPath)) {
                 const speechUri = this.convertToUri(snippet);
-                console.log(`Download "${speechUri}" and speak: "${snippet}"`);
+                console.log(`Download "${speechUri}"`);
                 await this.download(speechUri, speechPath);
-                await this.play(speechPath);
             }
+            console.log(`Speak: "${snippet}"`);
+            await this.play(speechPath);
         };
     }
     /**
@@ -48,11 +46,15 @@ export default class Speech {
         return this.uri + encodeURIComponent(text);
     }
     /**
-     * Convert text to a file path.
+     * Convert text to a file path. Filename for text is converted to lowercase,
+     * punctuation removed, trimmed, and non-alphanumeric chars subbed to dash.
      * @param {string} text The text to be converted.
      */
     convertToPath (text) {
-        return path.join(this.cacheDir, text.toLowerCase().trim().replace(/[!?,.;:'"]/g, '').replace(/[^A-Za-z0-9]/g, '-') + '.mp3');
+        return path.join(
+            this.cacheDir,
+            text.toLowerCase().replace(/[!?,.;:'"]/g, '').trim().replace(/[^A-Za-z0-9]/g, '-') + '.mp3'
+        );
     }
     /**
      * This method plays an audio file, and returns a promise.
