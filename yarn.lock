@@ -8388,6 +8388,10 @@ schema-utils@^1.0.0:
     ajv-errors "^1.0.0"
     ajv-keywords "^3.1.0"
 
+scripture@joshuacurtiss/scripture#1.0.1:
+  version "1.0.1"
+  resolved "https://codeload.github.com/joshuacurtiss/scripture/tar.gz/ecbc0380a52d359d2d9b14ecb36b53b23631c19f"
+
 select-hose@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/select-hose/-/select-hose-2.0.0.tgz#625d8658f865af43ec962bfc376a37359a4994ca"

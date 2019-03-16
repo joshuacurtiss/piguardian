@@ -23,6 +23,7 @@
 <script>
 import cheerio from 'cheerio';
 import moment from 'moment';
+import ScriptureUtil from 'scripture';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faVolumeUp, faCircleNotch, faComment } from '@fortawesome/free-solid-svg-icons';
@@ -71,6 +72,22 @@ export default {
                 this.download(dateFmt);
             }
         },
+        convertReadable (content) {
+            // Put spaces around dashes
+            content = content.replace(/[—-]/g, ' $& ');
+            // Pause for parentheses
+            content = content.replace(/[)(]/g, ' . ');
+            // Find scriptures and sub out their full version
+            const util = new ScriptureUtil();
+            let scriptures = util.parseScripturesWithIndex(content);
+            scriptures.reverse(); // Always process results in reverse when modifying strings
+            scriptures.forEach(scripture => {
+                content = content.substring(0, scripture.index) +
+                    scripture.obj.toString() +
+                    content.substring(scripture.index + scripture.match.length);
+            });
+            return content;
+        },
         download (dateFmt) {
             console.log('Download the Daily Scripture...');
             this.$http.get(this.uri + dateFmt).then(response => {
@@ -87,12 +104,13 @@ export default {
             });
         },
         read () {
+            const themeScrp = this.convertReadable(this.$refs.themeScrp.textContent.trim());
+            const content = this.convertReadable(this.$refs.content.textContent.trim());
             window.speech.speak(
                 'Daily text for ' +
                 moment(localStorage[DATEKEY]).format('dddd, MMMM Do. ') +
                 'Theme scripture. ' +
-                this.$refs.themeScrp.textContent.trim() + ' ' +
-                this.$refs.content.textContent.trim()
+                themeScrp + ' ' + content
             );
         }
     },
