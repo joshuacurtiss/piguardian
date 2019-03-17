@@ -61,7 +61,12 @@ srv.post('/api/:type', (req, res) => {
     const type = req.params.type;
     try {
         const data = req.body;
-        data.comment = `${data.device.name} ${data.device.name.slice(-1) === 's' ? 'are' : 'is'} ${data.value}.`;
+        data.comment = `
+            ${data.device.name} 
+            ${data.type === 'level' ? 'level' : ''}
+            ${data.type !== 'level' && data.device.name.slice(-1) === 's' ? 'are' : 'is'} 
+            ${data.value}.
+        `;
         if (data.device.capability === 'presence') {
             data.comment = `${data.device.name} has ${data.device.value === 'present' ? 'arrived' : 'left'}.`;
         }

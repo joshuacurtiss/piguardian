@@ -105,6 +105,7 @@ def subscribeAll() {
 	subscribe(contact, "contact", generalDeviceEventHandler)
     subscribe(presence, "presence", generalDeviceEventHandler) 
     subscribe(switches, "switch", generalDeviceEventHandler)
+    subscribe(switches, "level", generalDeviceEventHandler)
     subscribe(bulb, "bulb", generalDeviceEventHandler)
     subscribe(lock, "lock", generalDeviceEventHandler)
     subscribe(location, "alarmSystemStatus", alarmStatusHandler)
