@@ -7,7 +7,7 @@
     "scripts": {
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
-        "buildrpi": "vue-cli-service electron:build --linux=AppImage --armv7l",
+        "buildrpi": "vue-cli-service electron:build --linux",
         "lint": "vue-cli-service lint",
         "electron:build": "vue-cli-service electron:build",
         "electron:serve": "vue-cli-service electron:serve",
