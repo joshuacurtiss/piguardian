@@ -1,8 +1,9 @@
 <template>
     <div class="dailyscriptureContainer">
         <font-awesome-icon
-            icon="volume-up"
+            :icon="speechToken ? 'stop' : 'volume-up'"
             :mask="['fas', 'comment']"
+            :class="{pulsate: speechToken}"
             transform="shrink-8 left-0.3 up-0.5"
             v-show='ready'
             @click="read"
@@ -26,8 +27,8 @@ import moment from 'moment';
 import ScriptureUtil from 'scripture';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faVolumeUp, faCircleNotch, faComment } from '@fortawesome/free-solid-svg-icons';
-library.add(faVolumeUp, faCircleNotch, faComment);
+import { faVolumeUp, faCircleNotch, faComment, faStop } from '@fortawesome/free-solid-svg-icons';
+library.add(faVolumeUp, faCircleNotch, faComment, faStop);
 const DATEKEY = 'piguardian.dailyscripture.date';
 const SCRPKEY = 'piguardian.dailyscripture.themescrp';
 const CONTENTKEY = 'piguardian.dailyscripture.content';
@@ -38,8 +39,9 @@ export default {
     },
     data () {
         return {
-            themeScrp: null,
             content: null,
+            speechToken: null,
+            themeScrp: null,
             timer: null
         };
     },
@@ -109,12 +111,20 @@ export default {
         read () {
             const themeScrp = this.convertReadable(this.$refs.themeScrp.textContent.trim());
             const content = this.convertReadable(this.$refs.content.textContent.trim());
-            window.speech.speak(
-                'Daily text for ' +
-                moment(localStorage[DATEKEY]).format('dddd, MMMM Do. ') +
-                'Theme scripture. ' +
-                themeScrp + ' ' + content
-            );
+            if (!this.speechToken) {
+                this.speechToken = window.speech.speak(
+                    'Daily text for ' +
+                    moment(localStorage[DATEKEY]).format('dddd, MMMM Do. ') +
+                    'Theme scripture. ' +
+                    themeScrp + ' ' + content,
+                    () => {
+                        this.speechToken = null;
+                    }
+                );
+            } else {
+                window.speech.stop(this.speechToken);
+                this.speechToken = null;
+            }
         }
     },
     mounted () {
@@ -141,6 +151,14 @@ export default {
     cursor: pointer;
     margin: 3vh -5vw 0 3vw;
     font-size: 10vh;
+}
+.pulsate {
+    animation: pulse 4s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%   {opacity: 1;}
+    50%  {opacity: 0.5;}
+    100% {opacity: 1;}
 }
 </style>
 <style>
