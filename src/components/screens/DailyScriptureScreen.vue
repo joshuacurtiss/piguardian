@@ -75,8 +75,11 @@ export default {
         convertReadable (content) {
             // Put spaces around dashes
             content = content.replace(/[—-]/g, ' $& ');
+            // Strip out end publication reference
+            content = content.replace(/\w\d\d\.\d\d\s[\d\s¶:;,-]+$/i, '');
             // Pause for parentheses
-            content = content.replace(/[)(]/g, ' . ');
+            content = content.replace(/\(/g, '');
+            content = content.replace(/\)/g, '.');
             // Find scriptures and sub out their full version
             const util = new ScriptureUtil();
             let scriptures = util.parseScripturesWithIndex(content);
