@@ -17,6 +17,7 @@ export default class Speech {
     constructor (uri, cacheDir, purgeAgeDays = 90) {
         this.uri = uri;
         this.cacheDir = cacheDir;
+        this.speaking = {};
         // On instantiation, make sure directory exists and purge old audio files.
         const extRegex = new RegExp('\\.' + EXT + '$', 'i');
         const purgeDateMs = new Date().getTime() - purgeAgeDays * 24 * 60 * 60 * 1000;
@@ -40,24 +41,79 @@ export default class Speech {
         return this;
     }
     /**
+     * Use this method to initiate speech. It returns a speaking session token.
+     * @param {string} text The text to be spoken.
+     * @param {function} cb Callback function.
+     */
+    speak (text, cb) {
+        const token = this.generateSpeakingToken(text);
+        this.speaking[token] = true;
+        this.handleSpeak(text, token, cb);
+        return token;
+    }
+    /**
      * This method does the whole shebang. It downloads/plays the speech.
      * @param {string} text The text to be spoken.
+     * @param {function} cb Callback function.
      */
-    async speak (text) {
+    handleSpeak (text, token, cb) {
+        // First separate out text into smaller snippets
         const snippets = splitSentences(text);
-        for (let snippet of snippets) {
+        // Download all audio snippets at once
+        Promise.all(snippets.map(snippet => new Promise(async resolve => {
             snippet = snippet
                 .replace(/[[\]]/g, '') // Eliminate [brackts]
-                .replace(/["\u201C\u201D]/g, ''); // Eliminate double-quotes
+                .replace(/["\u201C\u201D]/g, ''); // Eliminate "double-quotes"
             const speechPath = this.convertToPath(snippet);
+            // If file does not exist, go request it
             if (!fs.existsSync(speechPath)) {
                 const speechUri = this.convertToUri(snippet);
                 console.log(`Download "${speechUri}"`);
                 await this.download(speechUri, speechPath);
             }
-            console.log(`Speak: "${snippet}"`);
-            await this.play(speechPath);
-        };
+            // Resolve promise with the file path. So we'll end with an array of audio files to play.
+            resolve(speechPath);
+        }))).then(async paths => {
+            // Then play all the audio files once at a time in succession.
+            for (const path of paths) {
+                // Only proceed if the speaking token still exists.
+                if (this.speaking[token]) {
+                    console.log(`Speak: "${path}"`);
+                    await this.play(path, token);
+                }
+            }
+            delete this.speaking[token];
+            if (cb) cb();
+        });
+    }
+    /**
+     * Stops the speech of an existing speaking session.
+     * @param {string} token The speaking session token to stop.
+     */
+    stop (token) {
+        const audio = this.speaking[token];
+        delete this.speaking[token];
+        try {
+            audio.kill();
+        } catch (exc) {
+            console.error(exc);
+        }
+    }
+    /**
+     * Generate a speaking session token.
+     * @param {string} str String of speech text, to help generate the speech token.
+     */
+    generateSpeakingToken (str) {
+        const dt = new Date().getTime();
+        return this.hashCode(dt + str);
+    }
+    /**
+     * Return the hash code of a string.
+     * @param {string} str The string to be hashed
+     */
+    hashCode (str) {
+        return str.split('').reduce((prevHash, currVal) =>
+            (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0, 0);
     }
     /**
      * Convert text to a Google TTS URI to generate the speech.
@@ -80,10 +136,11 @@ export default class Speech {
     /**
      * This method plays an audio file, and returns a promise.
      * @param {string} path The file to be played.
+     * @param {string} token The speaking session token for this speech.
      */
-    play (path) {
-        return new Promise(function (resolve, reject) {
-            player.play(path, err => {
+    play (path, token) {
+        return new Promise((resolve, reject) => {
+            this.speaking[token] = player.play(path, err => {
                 if (err) {
                     console.log(`Could not play speech: ${path}`);
                     reject(Error(err));
