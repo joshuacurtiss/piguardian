@@ -46,6 +46,9 @@ export default class Speech {
     async speak (text) {
         const snippets = splitSentences(text);
         for (let snippet of snippets) {
+            snippet = snippet
+                .replace(/[[\]]/g, '') // Eliminate [brackts]
+                .replace(/["\u201C\u201D]/g, ''); // Eliminate double-quotes
             const speechPath = this.convertToPath(snippet);
             if (!fs.existsSync(speechPath)) {
                 const speechUri = this.convertToUri(snippet);
