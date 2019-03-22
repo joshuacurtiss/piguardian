@@ -284,10 +284,8 @@ def broadcastPostJson(params) {
 	def origUri=params.uri
     for( u in state.uri ) {
 		params.uri=u.uri+origUri
-        params.params=[
-            headers: [
-                authorization: "Bearer "+u.jwt
-            ]
+        params.headers=[
+            authorization: "Bearer "+u.jwt
         ]
 	    try {
     	    log.debug "$params.uri $params.body"
