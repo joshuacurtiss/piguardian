@@ -74,7 +74,11 @@
                 </transition>
             </main>
             <footer>
-                <img class="logo" src="../assets/logo.png" />
+                <img
+                    class="logo"
+                    src="../assets/logo.png"
+                    @click="helloWorld"
+                />
                 <dashboard-event-bubble
                     v-model='topActiveEvent'
                     @done='topActiveEvent.active=false'
@@ -247,6 +251,9 @@ export default {
         },
         handleChangeScreen (index) {
             this.activeScreenIndex = index;
+        },
+        helloWorld () {
+            this.addEvent(`Hi! I'm Pi Guardian v${window.version}!`);
         },
         getWidgetForDevice (dev) {
             if (dev && dev.capability && CAPABILITIES[dev.capability]) return CAPABILITIES[dev.capability].component;

@@ -11,6 +11,7 @@ const APPDATADIR = remote.app.getPath('userData');
 const SETTINGSPATH = path.join(APPDATADIR, 'state.json');
 const TTSCACHEDIR = path.join(APPDATADIR, 'ttscache');
 
+window.version = remote.app.getVersion();
 window.settings = new Settings(SETTINGSPATH);
 window.speech = new Speech(window.settings.tts.uri, TTSCACHEDIR);
 
