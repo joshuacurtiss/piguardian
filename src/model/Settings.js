@@ -17,6 +17,9 @@ export default class Settings {
     get serverIsConfigured () {
         return (this.server.address && this.server.port);
     }
+    get serverApiUri () {
+        return `${this.server.address}:${this.server.port}/api`;
+    }
     load () {
         try {
             if (this.path.length) {
@@ -70,7 +73,8 @@ const DEFAULTS = {
     },
     'server': {
         'address': null,
-        'port': 31415
+        'port': 31415,
+        'jwtHmac': null
     },
     'smartthings': {
         'uri': null,
