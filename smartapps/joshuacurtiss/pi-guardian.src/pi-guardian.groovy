@@ -157,12 +157,14 @@ def findDevice(id) {
 /* Web API */
 
 def addClientUri() {
-	if( state.uri.find {it.uri==params.uri} ) {
+    def clienturi=state.uri.find {it.uri==params.uri};
+	if( clienturi ) {
+        clienturi.jwt=params.jwt
 		log.debug "The URI ${params.uri} already exists in the list."
-        return [success:false];
+        return [success:true];
 	} else {
         log.debug "Adding URI ${params.uri}"
-        state.uri << [uri:params.uri, fails:0, successes:0]
+        state.uri << [uri:params.uri, jwt:params.jwt, fails:0, successes:0]
 	    return [success:true]
     }
 }
@@ -282,6 +284,11 @@ def broadcastPostJson(params) {
 	def origUri=params.uri
     for( u in state.uri ) {
 		params.uri=u.uri+origUri
+        params.params=[
+            headers: [
+                authorization: "Bearer "+u.jwt
+            ]
+        ]
 	    try {
     	    log.debug "$params.uri $params.body"
         	httpPostJson(params) { resp ->
