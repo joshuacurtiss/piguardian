@@ -26,6 +26,8 @@ import Keypad from './components/Keypad.vue';
 import SplashScreen from './components/SplashScreen.vue';
 import electron from 'electron';
 import ip from 'ip';
+import jsonwebtoken from 'jsonwebtoken';
+import moment from 'moment';
 export default {
     name: 'app',
     components: {
@@ -37,6 +39,7 @@ export default {
     data () {
         return {
             ready: false,
+            registerClientTimeout: null,
             splashMessage: '',
             showAlarmKeypad: false,
             showClock: false,
@@ -90,8 +93,21 @@ export default {
          */
         registerClient () {
             if (window.settings.serverIsConfigured && window.settings.smartthingsIsConfigured) {
+                // Set up timeout to happen at end of day so we send fresh registration daily
+                clearTimeout(this.registerClientTimeout);
+                const eod = moment().endOf('day');
+                const now = moment();
+                const diff = moment.duration(eod.diff(now)).as('milliseconds');
+                this.registerClientTimeout = setTimeout(this.registerClient, diff);
+                // Create a new JWT and register my client
+                const jwt = jsonwebtoken.sign({}, window.settings.server.jwtHmac, {
+                    expiresIn: '24h',
+                    audience: window.settings.smartthings.uri,
+                    issuer: window.settings.serverApiUri
+                });
                 this.$http.post(window.settings.smartthings.uri + '/clienturi', {
-                    'uri': `${window.settings.server.address}:${window.settings.server.port}/api`
+                    'uri': window.settings.serverApiUri,
+                    'jwt': jwt
                 }, {
                     emulateJSON: true,
                     headers: {

@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow } from 'electron';
 import bodyParser from 'body-parser';
 import express from 'express';
+import jsonwebtoken from 'jsonwebtoken';
 import path from 'path';
 import Settings from './model/Settings';
 import {
@@ -52,30 +53,58 @@ srv.post('/api/keypad', (req, res) => {
 
 srv.post('/api/intrusion', (req, res) => {
     var data = req.body;
-    win.webContents.send('intrusion-update', data);
-    console.log('Intrusion status is ' + data.value + '.');
-    res.send('Intrusion status: ' + data.value + '.');
+    const payload = validateAuthorizationHeader(req.header('authorization'));
+    if (payload.success) {
+        win.webContents.send('intrusion-update', data);
+        console.log('Intrusion status is ' + data.value + '.');
+        res.send('Intrusion status: ' + data.value + '.');
+    } else {
+        res.send('Intrusion not accepted: Authorization failed.');
+    }
 });
 
 srv.post('/api/:type', (req, res) => {
     const type = req.params.type;
-    try {
-        const data = req.body;
-        data.comment = `
-            ${data.device.name} 
-            ${data.type === 'level' ? 'level' : ''}
-            ${data.type !== 'level' && data.device.name.slice(-1) === 's' ? 'are' : 'is'} 
-            ${data.value}.
-        `;
-        if (data.device.capability === 'presence') {
-            data.comment = `${data.device.name} has ${data.device.value === 'present' ? 'arrived' : 'left'}.`;
+    const payload = validateAuthorizationHeader(req.header('authorization'));
+    if (payload.success) {
+        try {
+            const data = req.body;
+            data.comment = `
+                ${data.device.name} 
+                ${data.type === 'level' ? 'level' : ''}
+                ${data.type !== 'level' && data.device.name.slice(-1) === 's' ? 'are' : 'is'} 
+                ${data.value}.
+            `;
+            if (data.device.capability === 'presence') {
+                data.comment = `${data.device.name} has ${data.device.value === 'present' ? 'arrived' : 'left'}.`;
+            }
+            win.webContents.send('device-update', data);
+        } catch (err) {
+            console.log('Error. ' + err);
         }
-        win.webContents.send('device-update', data);
-    } catch (err) {
-        console.log('Error. ' + err);
+        res.send(`Notification: ${type} ${JSON.stringify(req.body)}`);
+    } else {
+        res.send(`Notification: ${type} not accepted: Authorization failed.`);
     }
-    res.send(`Notification: ${type} ${JSON.stringify(req.body)}`);
 });
+
+// JWT Security
+
+function validateAuthorizationHeader (auth) {
+    const authArray = auth ? auth.split(' ') : [];
+    const jwt = authArray.length === 2 ? authArray[1] : '';
+    try {
+        let payload = jsonwebtoken.verify(jwt, settings.server.jwtHmac, {
+            audience: settings.smartthingsIsConfigured.uri,
+            issuer: settings.serverApiUri
+        });
+        payload.success = true;
+        return payload;
+    } catch (exc) {
+        console.log(`Token is invalid. ${exc}`);
+        return { 'success': false };
+    }
+}
 
 // TODO: This should receive a msg to reload the server if settings are updated.
 srv.listen(settings.server.port, () => {
