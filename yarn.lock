@@ -8478,10 +8478,10 @@ split@^1.0.0:
   dependencies:
     through "2"
 
-splitsentences@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/splitsentences/-/splitsentences-1.0.1.tgz#47e664b598bfc40e8ef7bff38045f503c0d1735d"
-  integrity sha512-uBSWosxq+iv1x0IK1PPil6YLZFyJG2nOFqEzOCuvPzWwdTEmr2JxE3ZwEi1gKXgd7Mk2scdSAQJ31NTTiuRjHg==
+splitsentences@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/splitsentences/-/splitsentences-1.0.2.tgz#01a0cbab899bf40cd539df570a0f5bb93884ee43"
+  integrity sha512-C2HFHe0l9pP3MACKxoBfNUWtn9FrW1+G96o9evcMUnXaXXRaNdfYTQPWB3hCWr16HJRJtqGSkJdEW4PGCZCx7A==
 
 sprintf-js@~1.0.2:
   version "1.0.3"
