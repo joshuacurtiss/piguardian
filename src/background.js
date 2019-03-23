@@ -63,6 +63,18 @@ srv.post('/api/intrusion', (req, res) => {
     }
 });
 
+srv.post('/api/shm', (req, res) => {
+    var data = req.body;
+    const payload = validateAuthorizationHeader(req.header('authorization'));
+    if (payload.success) {
+        win.webContents.send('shm-update', data);
+        console.log('SHM status is: ' + data.value + '.');
+        res.send('SHM status: ' + data.value + '.');
+    } else {
+        res.send('SHM update not accepted: Authorization failed.');
+    }
+});
+
 srv.post('/api/:type', (req, res) => {
     const type = req.params.type;
     const payload = validateAuthorizationHeader(req.header('authorization'));

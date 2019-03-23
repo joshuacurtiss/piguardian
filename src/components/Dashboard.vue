@@ -31,6 +31,7 @@
                                         v-bind:is='getWidgetForDevice(devicesById[deviceId])'
                                         v-model='devicesById[deviceId]'
                                         @change='updateDevice'
+                                        @event='addEvent($event)'
                                     ></component>
                                 </ul>
                             </div>
@@ -38,6 +39,7 @@
                                 <component
                                     v-bind:is='activeDeviceScreens[i].component'
                                     v-model='activeDeviceScreens[i]'
+                                    @event='addEvent($event)'
                                 ></component>
                             </div>
                             <div v-else>
@@ -57,6 +59,7 @@
                                         v-bind:is='getWidgetForDevice(devicesById[deviceId])'
                                         v-model='devicesById[deviceId]'
                                         @change='updateDevice'
+                                        @event='addEvent($event)'
                                     ></component>
                                 </ul>
                             </div>
@@ -64,6 +67,7 @@
                                 <component
                                     v-bind:is='activeCustomScreens[i].component'
                                     v-model='activeCustomScreens[i]'
+                                    @event='addEvent($event)'
                                 ></component>
                             </div>
                             <div v-else>
@@ -111,6 +115,7 @@ import Event from '../model/Event';
 // Screens
 import DailyScriptureScreen from './screens/DailyScriptureScreen.vue';
 import DebugVoiceScreen from './screens/DebugVoiceScreen.vue';
+import SmartHomeMonitorScreen from './screens/SmartHomeMonitorScreen.vue';
 // Widgets
 import ContactWidget from './widgets/ContactWidget.vue';
 import LockWidget from './widgets/LockWidget.vue';
@@ -155,6 +160,7 @@ export default {
         FontAwesomeIcon,
         LockWidget,
         PresenceWidget,
+        SmartHomeMonitorScreen,
         Swipe,
         SwipeItem,
         SwitchWidget,
