@@ -15,7 +15,7 @@ export default class Settings {
         return (this.smartthings.uri && this.smartthings.token);
     }
     get serverIsConfigured () {
-        return (this.server.address && this.server.port);
+        return (this.server.address && this.server.port && this.server.jwtHmac);
     }
     get serverApiUri () {
         return `${this.server.address}:${this.server.port}/api`;
