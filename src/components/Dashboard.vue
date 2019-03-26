@@ -116,6 +116,7 @@ import Event from '../model/Event';
 import DailyScriptureScreen from './screens/DailyScriptureScreen.vue';
 import DebugVoiceScreen from './screens/DebugVoiceScreen.vue';
 import SmartHomeMonitorScreen from './screens/SmartHomeMonitorScreen.vue';
+import WeatherScreen from './screens/WeatherScreen.vue';
 // Widgets
 import ContactWidget from './widgets/ContactWidget.vue';
 import LockWidget from './widgets/LockWidget.vue';
@@ -164,7 +165,8 @@ export default {
         Swipe,
         SwipeItem,
         SwitchWidget,
-        UnknownWidget
+        UnknownWidget,
+        WeatherScreen
     },
     props: {
         active: Boolean
