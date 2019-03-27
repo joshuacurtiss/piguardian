@@ -63,6 +63,7 @@ export default {
                 'apiKey': null,
                 'apiUri': 'https://api.openweathermap.org/data/2.5/',
                 'iconUri': 'https://openweathermap.org/img/w/',
+                'requestFocusTime': null,
                 'units': 'imperial',
                 'zipCode': null
             }, this.value),
@@ -82,8 +83,8 @@ export default {
         'active'
     ],
     watch: {
-        active () {
-            this.load();
+        active (newval) {
+            if (newval) this.load();
         },
         value (newvalue) {
             Object.assign(this.config, newvalue);
@@ -113,6 +114,7 @@ export default {
             return icons[code];
         },
         load () {
+            if (!this.active && moment().format('h:mma') === this.config.requestFocusTime) this.$emit('requestFocus');
             if (!this.active) return; // Don't load data if the screen is not active.
             const newCurrent = store.get(CURRENTKEY);
             if (newCurrent) {
