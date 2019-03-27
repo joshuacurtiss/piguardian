@@ -1,6 +1,14 @@
 <template>
     <div class="weatherContainer">
-        <main>
+        <div v-if='!loaded' class='loadingIndicator'>
+            <font-awesome-icon
+                icon="circle-notch"
+                transform="left-3"
+                spin
+            />
+            Loading...
+        </div>
+        <main v-show='loaded'>
             <h1>Current Weather</h1>
             <h2>{{ current.name }}</h2>
             <p class='cond'>
@@ -34,6 +42,10 @@ import expirePlugin from 'store/plugins/expire';
 import store from 'store/dist/store.modern';
 import moment from 'moment';
 import icons from '../../assets/weather';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+library.add(faCircleNotch);
 store.addPlugin(expirePlugin);
 const CHECKINTERVAL = 60006;
 const FORECASTKEY = 'piguardian.weather.forecast';
@@ -42,7 +54,9 @@ const CURRENTEXPIRATION = 10 * 60 * 1000; // 10min
 const FORECASTEXPIRATION = 6 * 60 * 60 * 1000; // 6hr
 export default {
     name: 'weather-screen',
-    components: {},
+    components: {
+        FontAwesomeIcon
+    },
     data () {
         return {
             config: Object.assign({
@@ -53,12 +67,12 @@ export default {
                 'zipCode': null
             }, this.value),
             current: {
-                'name': 'No data!',
-                'temp': 0,
-                'dt': 'never',
-                'description': '',
-                'main': '',
-                'icon': ''
+                'name': null,
+                'temp': null,
+                'dt': null,
+                'description': null,
+                'main': null,
+                'icon': null
             },
             forecast: []
         };
@@ -77,6 +91,9 @@ export default {
         }
     },
     computed: {
+        loaded () {
+            return this.current.name && this.current.temp && this.current.dt;
+        },
         ready () {
             return this.config.apiKey && this.config.zipCode;
         },
@@ -163,6 +180,11 @@ export default {
 </script>
 
 <style scoped>
+.loadingIndicator {
+    font-size: 5vh;
+    text-align: center;
+    margin-top: 33vh;
+}
 h1 {
     margin: 5vh 0 2vh;
     font-size: 7vh;
