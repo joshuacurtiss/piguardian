@@ -35,6 +35,7 @@ import store from 'store/dist/store.modern';
 import moment from 'moment';
 import icons from '../../assets/weather';
 store.addPlugin(expirePlugin);
+const CHECKINTERVAL = 60006;
 const FORECASTKEY = 'piguardian.weather.forecast';
 const CURRENTKEY = 'piguardian.weather.current';
 const CURRENTEXPIRATION = 10 * 60 * 1000; // 10min
@@ -63,9 +64,13 @@ export default {
         };
     },
     props: [
-        'value'
+        'value',
+        'active'
     ],
     watch: {
+        active () {
+            this.load();
+        },
         value (newvalue) {
             Object.assign(this.config, newvalue);
             this.load();
@@ -91,6 +96,7 @@ export default {
             return icons[code];
         },
         load () {
+            if (!this.active) return; // Don't load data if the screen is not active.
             const newCurrent = store.get(CURRENTKEY);
             if (newCurrent) {
                 this.current = newCurrent;
@@ -151,7 +157,7 @@ export default {
     },
     mounted () {
         this.load();
-        setInterval(this.load, 60006);
+        setInterval(this.load, CHECKINTERVAL);
     }
 };
 </script>
