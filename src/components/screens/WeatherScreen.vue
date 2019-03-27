@@ -189,7 +189,7 @@ table {
 }
 table tbody {
     display: block;
-    overflow: scroll;
+    overflow-y: scroll;
     height: 75vh;
     user-select: none;
 }
@@ -198,5 +198,8 @@ table td {
 }
 table img {
     margin: -7px 0 -11px 0;
+}
+::-webkit-scrollbar {
+    width: 0px;
 }
 </style>
