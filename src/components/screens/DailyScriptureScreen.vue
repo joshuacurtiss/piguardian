@@ -46,9 +46,17 @@ export default {
         };
     },
     props: {
+        active: {
+            type: Boolean
+        },
         value: {
             type: Object,
             default: function () {}
+        }
+    },
+    watch: {
+        active () {
+            this.check();
         }
     },
     computed: {
@@ -61,6 +69,7 @@ export default {
     },
     methods: {
         check () {
+            if (!this.active) return; // Don't load data if the screen is not active.
             console.log('Checking Daily Scripture...');
             const bufferms = 1500;
             const dateFmt = moment().format('YYYY/M/D');
