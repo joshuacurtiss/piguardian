@@ -14,6 +14,7 @@
                         v-model='orgCustom'
                         :height='20'
                         :width='67'
+                        :sync='true'
                         :color='{checked: "#1970d4", unchecked: "#db8411", disabled: "#CCCCCC"}'
                         :labels='{checked: "Custom", unchecked: "Device"}'
                     />
@@ -32,6 +33,7 @@
                                         v-model='devicesById[deviceId]'
                                         @change='updateDevice'
                                         @event='addEvent($event)'
+                                        @requestFocus='setFocus(false,i)'
                                     ></component>
                                 </ul>
                             </div>
@@ -41,6 +43,7 @@
                                     v-model='activeDeviceScreens[i]'
                                     :active='!orgCustom && activeDeviceScreenKeys[activeScreenIndex]===i'
                                     @event='addEvent($event)'
+                                    @requestFocus='setFocus(false,i)'
                                 ></component>
                             </div>
                             <div v-else>
@@ -61,6 +64,7 @@
                                         v-model='devicesById[deviceId]'
                                         @change='updateDevice'
                                         @event='addEvent($event)'
+                                        @requestFocus='setFocus(true,i)'
                                     ></component>
                                 </ul>
                             </div>
@@ -70,6 +74,7 @@
                                     v-model='activeCustomScreens[i]'
                                     :active='orgCustom && activeCustomScreenKeys[activeScreenIndex]===i'
                                     @event='addEvent($event)'
+                                    @requestFocus='setFocus(true,i)'
                                 ></component>
                             </div>
                             <div v-else>
@@ -151,6 +156,7 @@ const CAPABILITIES = {
         name: 'Lights/Switches'
     }
 };
+const sleep = m => new Promise(r => setTimeout(r, m)); // eslint-disable-line promise/param-names
 const player = new PlaySound();
 export default {
     name: 'dashboard',
@@ -268,6 +274,14 @@ export default {
         getWidgetForDevice (dev) {
             if (dev && dev.capability && CAPABILITIES[dev.capability]) return CAPABILITIES[dev.capability].component;
             else return 'UnknownWidget';
+        },
+        async setFocus (custom, key) {
+            console.log(`Switch to ${custom ? 'Custom' : 'Devices'} - ${key}.`);
+            if (this.orgCustom !== custom) {
+                this.orgCustom = custom;
+                await sleep(777);
+            }
+            this.$refs[this.activeScreensName].goto(this.activeScreenKeys.indexOf(key));
         },
         /**
          * Loads all devices and their status.
