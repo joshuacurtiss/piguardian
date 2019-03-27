@@ -159,9 +159,6 @@ h2 {
     font-size: 12vh;
     margin: 0;
 }
-.cond {
-
-}
 .asof {
     font-size: 2vh;
     margin: 25vh 0 0 0;
@@ -172,6 +169,7 @@ main {
     height: 75vh;
     margin: 0 3vw;
     text-align: center;
+    user-select: none;
 }
 table {
     width: 51vw;
@@ -180,6 +178,7 @@ table tbody {
     display: block;
     overflow: scroll;
     height: 75vh;
+    user-select: none;
 }
 table td {
     padding-right: 1vw;
