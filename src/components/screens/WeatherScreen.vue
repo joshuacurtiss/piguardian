@@ -17,7 +17,7 @@
         <table>
         <tbody>
             <tr v-for='day in forecast' :key='day.dt'>
-                <td><img :src='"https://openweathermap.org/img/w/" + day.icon + ".png"' /></td>
+                <td><img :src='iconUrl(day.icon)' /></td>
                 <td>{{ day.dt }}</td>
                 <td>{{ day.temp }}º {{ tempUnit }}</td>
                 <td>{{ day.description }}</td>
@@ -34,6 +34,8 @@ import moment from 'moment';
 store.addPlugin(expirePlugin);
 const FORECASTKEY = 'piguardian.weather.forecast';
 const CURRENTKEY = 'piguardian.weather.current';
+const CURRENTEXPIRATION = 10 * 60 * 1000; // 10min
+const FORECASTEXPIRATION = 6 * 60 * 60 * 1000; // 6hr
 export default {
     name: 'weather-screen',
     components: {},
@@ -42,6 +44,7 @@ export default {
             config: Object.assign({
                 'apiKey': null,
                 'apiUri': 'https://api.openweathermap.org/data/2.5/',
+                'iconUri': 'https://openweathermap.org/img/w/',
                 'units': 'imperial',
                 'zipCode': null
             }, this.value),
@@ -53,7 +56,7 @@ export default {
                 'main': '',
                 'icon': ''
             },
-            forecast: null
+            forecast: []
         };
     },
     props: [
@@ -78,6 +81,9 @@ export default {
         }
     },
     methods: {
+        iconUrl (code) {
+            return this.config.iconUri + code + '.png';
+        },
         load () {
             const newCurrent = store.get(CURRENTKEY);
             if (newCurrent) {
@@ -101,8 +107,7 @@ export default {
                             'main': data.weather[0].main || '',
                             'icon': data.weather[0].icon || ''
                         };
-                        const currentExpiration = moment() + 10 * 60 * 1000; // 10min
-                        store.set(CURRENTKEY, this.current, currentExpiration);
+                        store.set(CURRENTKEY, this.current, moment() + CURRENTEXPIRATION);
                     }
                 }).catch(exception => {
                     console.error(exception);
@@ -130,8 +135,7 @@ export default {
                                 'icon': day.weather[0].icon
                             };
                         });
-                        const forecastExpiration = moment() + 6 * 60 * 60 * 1000; // 6hr
-                        store.set(FORECASTKEY, this.forecast, forecastExpiration);
+                        store.set(FORECASTKEY, this.forecast, moment() + FORECASTEXPIRATION);
                     }
                 }).catch(exception => {
                     console.error(exception);
@@ -184,6 +188,6 @@ table td {
     padding-right: 1vw;
 }
 table img {
-    margin: -9px 0 -12px 0
+    margin: -7px 0 -11px 0;
 }
 </style>
