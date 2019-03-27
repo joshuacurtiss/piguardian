@@ -39,6 +39,7 @@
                                 <component
                                     v-bind:is='activeDeviceScreens[i].component'
                                     v-model='activeDeviceScreens[i]'
+                                    :active='!orgCustom && activeDeviceScreenKeys[activeScreenIndex]===i'
                                     @event='addEvent($event)'
                                 ></component>
                             </div>
@@ -67,6 +68,7 @@
                                 <component
                                     v-bind:is='activeCustomScreens[i].component'
                                     v-model='activeCustomScreens[i]'
+                                    :active='orgCustom && activeCustomScreenKeys[activeScreenIndex]===i'
                                     @event='addEvent($event)'
                                 ></component>
                             </div>
