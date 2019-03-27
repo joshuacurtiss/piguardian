@@ -1,0 +1,20 @@
+module.exports = {
+    '01d': require('./day.svg'),
+    '01n': require('./night.svg'),
+    '02d': require('./cloudy-day-3.svg'),
+    '02n': require('./cloudy-night-3.svg'),
+    '03d': require('./cloudy.svg'),
+    '03n': require('./cloudy.svg'),
+    '04d': require('./cloudy.svg'),
+    '04n': require('./cloudy.svg'),
+    '09d': require('./rainy-6.svg'),
+    '09n': require('./rainy-6.svg'),
+    '10d': require('./rainy-3.svg'),
+    '10n': require('./rainy-7.svg'),
+    '11d': require('./thunder.svg'),
+    '11n': require('./thunder.svg'),
+    '13d': require('./snowy-3.svg'),
+    '13n': require('./snowy-5.svg'),
+    '50d': require('./fog.svg'),
+    '50n': require('./fog.svg')
+};

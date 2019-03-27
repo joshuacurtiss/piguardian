@@ -4,6 +4,8 @@
             <h1>Current Weather</h1>
             <h2>{{ current.name }}</h2>
             <p class='cond'>
+                <img :src='iconSvg(current.icon)' />
+                <br />
                 {{ current.main }}
             </p>
             <p class='temp'>
@@ -31,6 +33,7 @@
 import expirePlugin from 'store/plugins/expire';
 import store from 'store/dist/store.modern';
 import moment from 'moment';
+import icons from '../../assets/weather';
 store.addPlugin(expirePlugin);
 const FORECASTKEY = 'piguardian.weather.forecast';
 const CURRENTKEY = 'piguardian.weather.current';
@@ -83,6 +86,9 @@ export default {
     methods: {
         iconUrl (code) {
             return this.config.iconUri + code + '.png';
+        },
+        iconSvg (code) {
+            return icons[code];
         },
         load () {
             const newCurrent = store.get(CURRENTKEY);
@@ -152,20 +158,23 @@ export default {
 
 <style scoped>
 h1 {
-    margin: 9vh 0 2vh;
+    margin: 5vh 0 2vh;
     font-size: 7vh;
 }
 h2 {
     font-size: 5vh;
     margin: 0;
 }
+.cond img {
+    height: 41vh;
+    margin: -9vh 0 -9vh;
+}
 .temp {
     font-size: 12vh;
-    margin: 0;
+    margin: 3vh 0 0;
 }
 .asof {
     font-size: 2vh;
-    margin: 25vh 0 0 0;
 }
 main {
     float: left;
