@@ -144,7 +144,7 @@ export default {
 </script>
 
 <style>
-body {
+body, #app {
     margin: 0;
     background-color:black;
     font-family: Helvetica, Arial, sans-serif;
