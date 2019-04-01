@@ -22,6 +22,7 @@
             </header>
             <main>
                 <transition name='fade'>
+                    <!-- TODO: Add support to disable swiping when screens need to disable it. Like settings screens, etc. -->
                     <swipe v-show='!orgCustom' ref='deviceScreens' :auto='0' @change='handleChangeScreen'>
                         <swipe-item v-for='i in activeDeviceScreenKeys' :key='i'>
                             <div v-if='Array.isArray(activeDeviceScreens[i])'>
@@ -53,6 +54,7 @@
                     </swipe>
                 </transition>
                 <transition name='fade'>
+                    <!-- TODO: Add support to disable swiping when screens need to disable it. Like settings screens, etc. -->
                     <swipe v-show='orgCustom' ref='customScreens' :auto='0' @change='handleChangeScreen'>
                         <swipe-item v-for='i in activeCustomScreenKeys' :key='i'>
                             <div v-if='Array.isArray(activeCustomScreens[i])'>
