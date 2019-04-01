@@ -1,6 +1,6 @@
 <template>
     <transition name="slide-fade">
-        <div v-show='active' class='keypad'>
+        <div v-show='active' class='alarmContainer'>
             <div :class='"countdown " + (alarm ? "alarm" : "")'>
                 <font-awesome-icon
                     icon='bell'
@@ -10,29 +10,14 @@
                     {{ currCountdown }}
                 </div>
             </div>
-            <form :class='{"shake":passcodeFull && !passcodeValid}'>
-                <h1>Enter Passcode</h1>
-                <div class="passcodeui">
-                    <font-awesome-icon
-                        v-for='index in maxlength'
-                        :key='index'
-                        style='padding: 0 0.8vw;'
-                        :icon='passcode.length>=index ? ["fas","circle"] : ["far","circle"]'
-                    />
-                </div>
-                <button type="button" @click='addDigit(1)'>1 <div>&nbsp;</div></button>
-                <button type="button" @click='addDigit(2)'>2 <div>abc</div></button>
-                <button type="button" @click='addDigit(3)'>3 <div>def</div></button>
-                <button type="button" @click='addDigit(4)'>4 <div>ghi</div></button>
-                <button type="button" @click='addDigit(5)'>5 <div>jkl</div></button>
-                <button type="button" @click='addDigit(6)'>6 <div>mno</div></button>
-                <button type="button" @click='addDigit(7)'>7 <div>pqrs</div></button>
-                <button type="button" @click='addDigit(8)'>8 <div>tuv</div></button>
-                <button type="button" @click='addDigit(9)'>9 <div>wxyz</div></button>
-                <button type="button" @click='clearDigits()' class='function'>clear</button>
-                <button type="button" @click='addDigit(0)'>0</button>
-                <button type="button" @click='deleteDigit()' class='function'>delete</button>
-            </form>
+            <keypad
+                v-model='passcode'
+                :class='{
+                    "shake": passcodeFull && !passcodeValid,
+                    "keypad": true
+                }'
+                :maxlength='passcodeLength'
+            />
             <audio :src="warnUrl" loop="true" ref="warn"></audio>
             <audio :src="alarmUrl" loop="true" ref="alarm"></audio>
         </div>
@@ -41,16 +26,16 @@
 
 <script>
 import electron from 'electron';
+import Keypad from './Keypad.vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faBell, faCircle } from '@fortawesome/free-solid-svg-icons';
-import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons';
-library.add(faBell, faCircle, faCircleThin);
-
+import { faBell } from '@fortawesome/free-solid-svg-icons';
+library.add(faBell);
 export default {
-    name: 'Keypad',
+    name: 'Alarm',
     components: {
-        FontAwesomeIcon
+        FontAwesomeIcon,
+        Keypad
     },
     props: {
         active: Boolean
@@ -59,11 +44,11 @@ export default {
         alarm () {
             return this.currCountdown === 0;
         },
-        maxlength () {
-            return window.settings.keypad.passcodeLength;
-        },
         passcodeFull () {
             return this.passcode.length >= window.settings.keypad.passcodeLength;
+        },
+        passcodeLength () {
+            return window.settings.keypad.passcodeLength;
         },
         passcodeSettings () {
             return window.settings.keypad.passcodes[this.passcode];
@@ -85,9 +70,6 @@ export default {
         };
     },
     methods: {
-        addDigit (digit) {
-            if (!this.passcodeFull) { this.passcode += digit.toString(); }
-        },
         checkCountdown () {
             if (this.active) {
                 this.currCountdown -= 1;
@@ -98,12 +80,6 @@ export default {
                     this.$refs.alarm.play();
                 }
             }
-        },
-        clearDigits () {
-            this.passcode = '';
-        },
-        deleteDigit () {
-            if (this.passcode.length) { this.passcode = this.passcode.substr(0, this.passcode.length - 1); }
         }
     },
     watch: {
@@ -152,7 +128,7 @@ export default {
 </script>
 
 <style scoped>
-.keypad {
+.alarmContainer {
     position:absolute;
     top:0;
     left:0;
@@ -185,7 +161,7 @@ export default {
 .countdown {
     position: absolute;
     text-align: center;
-    top: 7vh;
+    top: 12vh;
     left: 1vw;
     width: 55vw;
     font-size: 66vh;
@@ -200,53 +176,11 @@ export default {
     color: #333;
     font-size: 23vh;
 }
-.keypad form {
-    width: 250px;
-    border-radius: 10px;
+.keypad {
     background-color: rgba(245, 245, 245, 0.9);
     box-shadow: 5px 5px 8px darkred;
-    margin-top: 2.5%;
-    margin-left: 57%;
-}
-.keypad form h1 {
-    font-size: 18px;
-    font-weight: normal;
-    text-align: center;
-    padding: 15px 0 0 0;
-    margin: 0;
-}
-.keypad .passcodeui {
-    margin: 12px 0 10px 0;
-    text-align: center;
-}
-.keypad .passcodeui i {
-    letter-spacing: 9px;
-}
-.keypad button {
-    border-radius: 50%;
-    border: 1px solid #ccc;
-    background-color: #e2e2e2;
-    margin: 10px;
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
-}
-.keypad button:focus {
-    outline: 0;
-}
-.keypad button:active {
-    background-color: #ccc;
-}
-.keypad button.function {
-    font-size: 12px;
-    background-color: transparent;
-    padding-top: -5px;
-    border:0;
-}
-.keypad button div {
-    font-size: 8px;
-    margin-top: -2px;
-    text-transform: uppercase;
+    margin-top: 8vh;
+    margin-left: 58vw;
 }
 /* Transition */
 .slide-fade-enter-active {
