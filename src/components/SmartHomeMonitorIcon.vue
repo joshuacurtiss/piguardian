@@ -1,5 +1,5 @@
 <template>
-    <font-awesome-layers fixed-width>
+    <font-awesome-layers fixed-width @click='$emit(`click`)'>
         <font-awesome-icon icon='circle' />
         <font-awesome-icon icon='home' transform='shrink-4' />
         <font-awesome-icon icon='square-full' transform='shrink-12 down-3.25' />
