@@ -27,12 +27,16 @@
 <script>
 import electron from 'electron';
 import Keypad from './Keypad.vue';
+import { Passcode as PasscodeMixin } from '../mixins/Passcode';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 library.add(faBell);
 export default {
     name: 'Alarm',
+    mixins: [
+        PasscodeMixin
+    ],
     components: {
         FontAwesomeIcon,
         Keypad
@@ -44,18 +48,6 @@ export default {
         alarm () {
             return this.currCountdown === 0;
         },
-        passcodeFull () {
-            return this.passcode.length >= window.settings.keypad.passcodeLength;
-        },
-        passcodeLength () {
-            return window.settings.keypad.passcodeLength;
-        },
-        passcodeSettings () {
-            return window.settings.keypad.passcodes[this.passcode];
-        },
-        passcodeValid () {
-            return window.settings.keypad.passcodes.hasOwnProperty(this.passcode);
-        },
         alarmUrl () {
             return 'file://' + window.settings.keypad.alarm.chime;
         },
@@ -65,8 +57,7 @@ export default {
     },
     data () {
         return {
-            currCountdown: 0,
-            passcode: ''
+            currCountdown: 0
         };
     },
     methods: {
@@ -127,6 +118,7 @@ export default {
 };
 </script>
 
+<style scoped src="../styles/shake.css"></style>
 <style scoped>
 .alarmContainer {
     position:absolute;
@@ -145,18 +137,6 @@ export default {
     0% {color: white;}
     50% {color: yellow;}
     100% {color: white;}
-}
-.shake {
-    animation: shake 0.9s cubic-bezier(.36,.07,.19,.97) both;
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
-    perspective: 1000px;
-}
-@keyframes shake {
-    10%, 90% {transform: translate3d(-2px, 0, 0);}
-    20%, 80% {transform: translate3d(3px, 0, 0);}
-    30%, 50%, 70% {transform: translate3d(-6px, 0, 0);}
-    40%, 60% {transform: translate3d(6px, 0, 0);}
 }
 .countdown {
     position: absolute;
