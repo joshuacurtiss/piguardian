@@ -12,9 +12,9 @@
             :active='showClock'
             @click='resetClockTimeout()'
         />
-        <keypad
-            :active='showAlarmKeypad'
-            @input='showAlarmKeypad=false'
+        <alarm
+            :active='showAlarm'
+            @input='showAlarm=false'
         />
     </div>
 </template>
@@ -22,7 +22,7 @@
 <script>
 import Clock from './components/Clock.vue';
 import Dashboard from './components/Dashboard.vue';
-import Keypad from './components/Keypad.vue';
+import Alarm from './components/Alarm.vue';
 import SplashScreen from './components/SplashScreen.vue';
 import electron from 'electron';
 import ip from 'ip';
@@ -31,9 +31,9 @@ import moment from 'moment';
 export default {
     name: 'app',
     components: {
+        Alarm,
         Clock,
         Dashboard,
-        Keypad,
         SplashScreen
     },
     data () {
@@ -41,14 +41,14 @@ export default {
             ready: false,
             registerClientTimeout: null,
             splashMessage: '',
-            showAlarmKeypad: false,
+            showAlarm: false,
             showClock: false,
             showClockTimeout: null,
             showClockTimeoutLen: 600000 // 10 min
         };
     },
     watch: {
-        showAlarmKeypad (value) {
+        showAlarm (value) {
             this.resetClockTimeout();
         }
     },
@@ -61,13 +61,13 @@ export default {
                 this.splashMessage = '';
                 this.ready = true;
                 this.resetClockTimeout();
-                // Check initial state of intrusion. Display alarm keypad if it is on.
+                // Check initial state of intrusion. Display alarm if it is on.
                 this.$http.get(window.settings.smartthings.uri + '/shm/intrusion', {
                     headers: {
                         'Authorization': 'Bearer ' + window.settings.smartthings.token
                     }
                 }).then(response => {
-                    this.showAlarmKeypad = (response.body && response.body.value === 'on');
+                    this.showAlarm = (response.body && response.body.value === 'on');
                 });
             } else {
                 // No configs. Show IP address to get started (or connect to network msg).
@@ -130,7 +130,7 @@ export default {
         });
         electron.ipcRenderer.on('intrusion-update', (event, data) => {
             this.resetClockTimeout();
-            this.showAlarmKeypad = (data.value === 'on');
+            this.showAlarm = (data.value === 'on');
         });
     },
     mounted () {
