@@ -126,7 +126,6 @@ import DashboardEventBubble from './DashboardEventBubble.vue';
 import Event from '../model/Event';
 // Screens
 import DailyScriptureScreen from './screens/DailyScriptureScreen.vue';
-import DebugVoiceScreen from './screens/DebugVoiceScreen.vue';
 import SmartHomeMonitorScreen from './screens/SmartHomeMonitorScreen.vue';
 import WeatherScreen from './screens/WeatherScreen.vue';
 // Widgets
@@ -170,7 +169,6 @@ export default {
         DailyScriptureScreen,
         DashboardClock,
         DashboardEventBubble,
-        DebugVoiceScreen,
         FontAwesomeIcon,
         LockWidget,
         PresenceWidget,
