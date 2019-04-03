@@ -123,6 +123,9 @@ export default {
             console.log('i need to merge: ', newvalue);
             Object.assign(this.config, newvalue);
         },
+        editMode (newval) {
+            this.$emit('requestFreezeUI', newval);
+        },
         passcode (newval) {
             if (this.passcodeValid) {
                 this.setNewShm();
