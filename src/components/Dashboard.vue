@@ -23,7 +23,7 @@
             </header>
             <main>
                 <transition name='fade'>
-                    <swipe v-show='!orgCustom' ref='deviceScreens' :auto='0' :disabled='freezeUI' @change='handleChangeScreen'>
+                    <swipe v-show='!orgCustom' ref='deviceScreens' :speed='150' :auto='0' :disabled='freezeUI' @change='handleChangeScreen'>
                         <swipe-item v-for='i in activeDeviceScreenKeys' :key='i'>
                             <div v-if='Array.isArray(activeDeviceScreens[i])'>
                                 <ul>
@@ -56,7 +56,7 @@
                     </swipe>
                 </transition>
                 <transition name='fade'>
-                    <swipe v-show='orgCustom' ref='customScreens' :auto='0' :disabled='freezeUI' @change='handleChangeScreen'>
+                    <swipe v-show='orgCustom' ref='customScreens' :speed='150' :auto='0' :disabled='freezeUI' @change='handleChangeScreen'>
                         <swipe-item v-for='i in activeCustomScreenKeys' :key='i'>
                             <div v-if='Array.isArray(activeCustomScreens[i])'>
                                 <ul>
@@ -188,6 +188,7 @@ export default {
             freezeUI: false,
             devices: [],
             events: [],
+            lastSwipeTime: 0,
             orgCustom: false
         };
     },
@@ -249,6 +250,7 @@ export default {
             }
         },
         orgCustom (newval) {
+            this.lastSwipeTime = new Date().getTime();
             this.activeScreenIndex = 0;
             this.$refs[this.activeScreensName].goto(0);
         }
@@ -270,6 +272,7 @@ export default {
             return obj;
         },
         handleChangeScreen (index) {
+            this.lastSwipeTime = new Date().getTime();
             this.activeScreenIndex = index;
         },
         helloWorld () {
@@ -280,12 +283,31 @@ export default {
             else return 'UnknownWidget';
         },
         async setFocus (custom, key) {
-            console.log(`Switch to ${custom ? 'Custom' : 'Devices'} - ${key}.`);
+            const now = new Date().getTime();
+            console.log(`Requested focus to ${custom ? 'Custom' : 'Devices'} - ${key}.`);
+            if (this.freezeUI) {
+                console.log('Request denied because Freeze UI is on.');
+                return;
+            }
+            if (now - this.lastSwipeTime < window.settings.dashboard.swipeCooldown) {
+                console.log('Request denied because the swipe cooldown is not done.');
+                return;
+            }
+            if (this.orgCustom === custom && this.activeScreenKey === key) {
+                console.log('Request denied because I am already on the right screen.');
+                return;
+            }
             if (this.orgCustom !== custom) {
                 this.orgCustom = custom;
                 await sleep(777);
             }
-            this.$refs[this.activeScreensName].goto(this.activeScreenKeys.indexOf(key));
+            const $activeSwipeContainer = this.$refs[this.activeScreensName];
+            const newIndex = this.activeScreenKeys.indexOf(key);
+            while (newIndex !== this.activeScreenIndex) {
+                if (newIndex > this.activeScreenIndex) $activeSwipeContainer.next();
+                else $activeSwipeContainer.prev();
+                await sleep(250);
+            };
         },
         /**
          * Loads all devices and their status.
@@ -348,6 +370,27 @@ export default {
             if (this.devicesById[data.device.id]) {
                 this.devicesById[data.device.id] = data.device;
             }
+            // Find the org/screen of this device. Because we will swipe to it.
+            let newOrgCustom = this.orgCustom;
+            let newKey;
+            let orgs = [
+                window.settings.dashboard.deviceScreens,
+                window.settings.dashboard.customScreens
+            ];
+            // Search first the org we're on. So if they're on custom, swap the two orgs in the array.
+            if (this.orgCustom) orgs.reverse();
+            orgs.some(screens => {
+                newKey = Object.keys(screens).find(key => {
+                    const screen = screens[key];
+                    // It's a match if this screen is an array of widgets, and one of them has this ID!
+                    return Array.isArray(screen) && screen.includes(data.device.id);
+                });
+                // If we found it, stop looking. Otherwise, switch to other org and search again.
+                if (newKey) return true;
+                else newOrgCustom = !newOrgCustom;
+            });
+            // If we did find one, set focus to it.
+            if (newKey) this.setFocus(newOrgCustom, newKey);
         });
         electron.ipcRenderer.on('message', (event, data) => {
             // If we have a valid comment, put it in the event bubble.

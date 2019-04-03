@@ -85,6 +85,7 @@ const DEFAULTS = {
     },
     'dashboard': {
         'refreshInterval': 3600000,
+        'swipeCooldown': 15000,
         'notifications': {
             'message': {
                 'chime': null
