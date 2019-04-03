@@ -202,6 +202,7 @@ export default {
             this.shm = data.value;
             this.loading = false;
             this.$emit('event', `Smart Home Monitor set to "${this.shm}".`);
+            this.$emit('requestFocus');
         });
     }
 };
