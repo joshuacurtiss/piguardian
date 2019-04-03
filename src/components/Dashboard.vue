@@ -15,6 +15,7 @@
                         :height='20'
                         :width='67'
                         :sync='true'
+                        :disabled='freezeUI'
                         :color='{checked: "#1970d4", unchecked: "#db8411", disabled: "#CCCCCC"}'
                         :labels='{checked: "Custom", unchecked: "Device"}'
                     />
@@ -22,8 +23,7 @@
             </header>
             <main>
                 <transition name='fade'>
-                    <!-- TODO: Add support to disable swiping when screens need to disable it. Like settings screens, etc. -->
-                    <swipe v-show='!orgCustom' ref='deviceScreens' :auto='0' @change='handleChangeScreen'>
+                    <swipe v-show='!orgCustom' ref='deviceScreens' :auto='0' :disabled='freezeUI' @change='handleChangeScreen'>
                         <swipe-item v-for='i in activeDeviceScreenKeys' :key='i'>
                             <div v-if='Array.isArray(activeDeviceScreens[i])'>
                                 <ul>
@@ -34,6 +34,7 @@
                                         v-model='devicesById[deviceId]'
                                         @change='updateDevice'
                                         @event='addEvent($event)'
+                                        @requestFreezeUI='freezeUI=$event'
                                         @requestFocus='setFocus(false,i)'
                                     ></component>
                                 </ul>
@@ -44,6 +45,7 @@
                                     v-model='activeDeviceScreens[i]'
                                     :active='!orgCustom && activeDeviceScreenKeys[activeScreenIndex]===i'
                                     @event='addEvent($event)'
+                                    @requestFreezeUI='freezeUI=$event'
                                     @requestFocus='setFocus(false,i)'
                                 ></component>
                             </div>
@@ -54,8 +56,7 @@
                     </swipe>
                 </transition>
                 <transition name='fade'>
-                    <!-- TODO: Add support to disable swiping when screens need to disable it. Like settings screens, etc. -->
-                    <swipe v-show='orgCustom' ref='customScreens' :auto='0' @change='handleChangeScreen'>
+                    <swipe v-show='orgCustom' ref='customScreens' :auto='0' :disabled='freezeUI' @change='handleChangeScreen'>
                         <swipe-item v-for='i in activeCustomScreenKeys' :key='i'>
                             <div v-if='Array.isArray(activeCustomScreens[i])'>
                                 <ul>
@@ -66,6 +67,7 @@
                                         v-model='devicesById[deviceId]'
                                         @change='updateDevice'
                                         @event='addEvent($event)'
+                                        @requestFreezeUI='freezeUI=$event'
                                         @requestFocus='setFocus(true,i)'
                                     ></component>
                                 </ul>
@@ -76,6 +78,7 @@
                                     v-model='activeCustomScreens[i]'
                                     :active='orgCustom && activeCustomScreenKeys[activeScreenIndex]===i'
                                     @event='addEvent($event)'
+                                    @requestFreezeUI='freezeUI=$event'
                                     @requestFocus='setFocus(true,i)'
                                 ></component>
                             </div>
@@ -184,6 +187,7 @@ export default {
     data () {
         return {
             activeScreenIndex: 0,
+            freezeUI: false,
             devices: [],
             events: [],
             orgCustom: false
