@@ -24,6 +24,7 @@ export default {
     },
     data () {
         return {
+            loading: false,
             style: {
                 backgroundColor: 'dimgray'
             }
@@ -47,6 +48,18 @@ export default {
                     battery: null
                 };
             }
+        }
+    },
+    watch: {
+        loading (newval) {
+            if (newval) {
+                setTimeout(() => {
+                    this.loading = false;
+                }, 15000);
+            }
+        },
+        value () {
+            this.loading = false;
         }
     }
 };

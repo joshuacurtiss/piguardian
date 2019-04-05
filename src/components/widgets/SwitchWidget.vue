@@ -1,11 +1,12 @@
 <template>
     <li class='widget'
-        :class='{dim, "tada": emphasis}'
+        :class='{dim, loading, "tada": emphasis}'
         :style='style'
         v-long-press="1300"
         @click='click'
         @long-press-start="longPress"
     >
+        <div class='loader-bars'></div>
         <h1>{{ title }}</h1>
         <font-awesome-icon
             class='icon'
@@ -48,6 +49,7 @@ export default {
     },
     methods: {
         click () {
+            this.loading = true;
             this.$emit('change', this.value, this.state === 'on' ? 'off' : 'on');
         },
         longPress () {

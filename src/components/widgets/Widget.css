@@ -49,3 +49,50 @@
 .widget.dim .icon {
     opacity: 0.3;
 }
+.widget.loading .icon {
+    opacity: 0;
+}
+.loader-bars
+{
+    position: absolute;
+    opacity: 0;
+    margin: 8vh 0 0 7.25vw;
+    height: 10vh;
+    width: 2vw;
+    animation: rectpulse infinite 1s ease-in-out -.2s;
+    background-color: rgb(200,200,200);
+    transition: opacity 0.3s;
+}
+.loading .loader-bars {
+    opacity: 0.3;
+}
+.loader-bars:before,
+.loader-bars:after
+{
+    position: absolute;
+    height: 21vh;
+    width: 2vw;
+    content: '';
+    background-color: rgb(200,200,200);
+}
+.loader-bars:before
+{
+    left: -3vw;
+    animation: rectpulse infinite 1s ease-in-out -.4s;
+}
+.loader-bars:after
+{
+    right: -3vw;
+    animation: rectpulse infinite 1s ease-in-out;
+}
+@keyframes rectpulse
+{
+    0%, 80%, 100% {
+        height: 7vh;
+        box-shadow: 0 0 rgb(200,200,200);
+    }
+    40% {
+        height: 10vh;
+        box-shadow: 0 -20px rgb(200,200,200);
+    }
+}
