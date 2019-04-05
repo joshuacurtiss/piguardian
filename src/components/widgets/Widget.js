@@ -30,6 +30,10 @@ export default {
         };
     },
     props: {
+        emphasis: {
+            type: Boolean,
+            default: false
+        },
         value: {
             type: Object,
             default: function () {

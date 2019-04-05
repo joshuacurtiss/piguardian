@@ -1,6 +1,6 @@
 <template>
     <li class='widget'
-        :class='{dim}'
+        :class='{dim, "tada": emphasis}'
         :style='style'
         v-long-press="1300"
         @click='click'

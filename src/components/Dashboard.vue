@@ -30,6 +30,7 @@
                                     <component
                                         v-for="deviceId in activeDeviceScreens[i]"
                                         :key='deviceId'
+                                        :emphasis='emphasis[deviceId]'
                                         v-bind:is='getWidgetForDevice(devicesById[deviceId])'
                                         v-model='devicesById[deviceId]'
                                         @change='updateDevice'
@@ -63,6 +64,7 @@
                                     <component
                                         v-for="deviceId in activeCustomScreens[i]"
                                         :key='deviceId'
+                                        :emphasis='emphasis[deviceId]'
                                         v-bind:is='getWidgetForDevice(devicesById[deviceId])'
                                         v-model='devicesById[deviceId]'
                                         @change='updateDevice'
@@ -187,6 +189,7 @@ export default {
             activeScreenIndex: 0,
             freezeUI: false,
             devices: [],
+            emphasis: {},
             events: [],
             lastSwipeTime: 0,
             orgCustom: false
@@ -344,6 +347,15 @@ export default {
                 }
             });
         },
+        /**
+         * Emphasize a given widget by assigning its deviceId to the emphasis object.
+         * @param deviceId {string} The Device ID.
+         */
+        async emphasize (deviceId) {
+            this.$set(this.emphasis, deviceId, true);
+            await sleep(5000);
+            this.$set(this.emphasis, deviceId, false);
+        },
         quit () {
             window.close();
         }
@@ -353,7 +365,7 @@ export default {
         // Refresh all devices on a given interval
         setInterval(this.loadDevices, window.settings.dashboard.refreshInterval);
         // IPC
-        electron.ipcRenderer.on('device-update', (event, data) => {
+        electron.ipcRenderer.on('device-update', async (event, data) => {
             // If we have a valid comment, put it in the event bubble and do chime/speech notification.
             if (data.comment) {
                 this.addEvent(data.comment);
@@ -390,7 +402,11 @@ export default {
                 else newOrgCustom = !newOrgCustom;
             });
             // If we did find one, set focus to it.
-            if (newKey) this.setFocus(newOrgCustom, newKey);
+            if (newKey && (this.orgCustom !== newOrgCustom || this.activeScreenKey !== newKey)) {
+                await this.setFocus(newOrgCustom, newKey);
+                await sleep(222);
+            }
+            this.emphasize(data.device.id);
         });
         electron.ipcRenderer.on('message', (event, data) => {
             // If we have a valid comment, put it in the event bubble.
@@ -411,6 +427,7 @@ export default {
 
 <style src='vue-swipe/dist/vue-swipe.css'></style>
 <style src='./widgets/Widget.css'></style>
+<style src='../styles/tada.css'></style>
 <style>
 /* Swipe Customizations */
 .mint-swipe-indicator {

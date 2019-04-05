@@ -1,6 +1,6 @@
 <template>
     <li class='widget'
-        :class='{dim}'
+        :class='{dim, "tada": emphasis}'
         :style='style'
     >
         <h1>{{ title }}</h1>
