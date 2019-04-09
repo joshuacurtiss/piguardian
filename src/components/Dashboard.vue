@@ -374,7 +374,7 @@ export default {
                 if (valspec) {
                     player.play(valspec.chime, err => {
                         if (err) console.log(`Could not play chime: ${err}`);
-                        if (valspec.speech) window.speech.speak(data.comment);
+                        if (valspec.speech && !window.settings.isNoSpeechTime(valspec.noSpeechTime)) window.speech.speak(data.comment);
                     });
                 }
             }

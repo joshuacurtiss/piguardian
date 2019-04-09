@@ -20,6 +20,21 @@ export default class Settings {
     get serverApiUri () {
         return `${this.server.address}:${this.server.port}/api`;
     }
+    isNoSpeechTime (timerange = null) {
+        if (Array.isArray(timerange) && timerange.length > 1) {
+            const now = new Date();
+            const today = now.toLocaleDateString();
+            const tomorrow = new Date(now.getTime() + 1000 * 60 * 60 * 24).toLocaleDateString();
+            const startTime = timerange[0];
+            const endTime = timerange[1];
+            const start = new Date(`${today} ${startTime}`);
+            let end = new Date(`${today} ${endTime}`);
+            // If end is before start, i.e. 9pm-7am, then make end time use tomorrow date
+            if (end <= start) end = new Date(`${tomorrow} ${endTime}`);
+            return now >= start && now <= end;
+        }
+        return false;
+    }
     load () {
         try {
             if (this.path.length) {
@@ -93,21 +108,25 @@ const DEFAULTS = {
             'contact': {
                 'open': {
                     'chime': null,
-                    'speech': false
+                    'speech': false,
+                    'noSpeechTime': null
                 },
                 'closed': {
                     'chime': null,
-                    'speech': false
+                    'speech': false,
+                    'noSpeechTime': null
                 }
             },
             'presence': {
                 'present': {
                     'chime': null,
-                    'speech': false
+                    'speech': false,
+                    'noSpeechTime': null
                 },
                 'not present': {
                     'chime': null,
-                    'speech': false
+                    'speech': false,
+                    'noSpeechTime': null
                 }
             }
         },
