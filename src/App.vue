@@ -2,6 +2,7 @@
     <div id='app'>
         <dashboard
             :active='ready'
+            @activity='resetClockTimeout'
         />
         <splash-screen
             title='Welcome to Pi Guardian'
@@ -10,7 +11,7 @@
         />
         <clock
             :active='showClock'
-            @click='resetClockTimeout()'
+            @click='resetClockTimeout'
         />
         <alarm
             :active='showAlarm'

@@ -255,6 +255,7 @@ export default {
         orgCustom (newval) {
             this.lastSwipeTime = new Date().getTime();
             this.activeScreenIndex = 0;
+            this.$emit('activity');
             this.$refs[this.activeScreensName].goto(0);
         }
     },
@@ -277,6 +278,7 @@ export default {
         handleChangeScreen (index) {
             this.lastSwipeTime = new Date().getTime();
             this.activeScreenIndex = index;
+            this.$emit('activity');
         },
         helloWorld () {
             this.addEvent(`Hi! I'm Pi Guardian v${window.version}!`);
