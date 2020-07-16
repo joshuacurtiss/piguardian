@@ -24,7 +24,7 @@
         "fs-extra": "^8.1.0",
         "ip": "^1.1.5",
         "jsonwebtoken": "^8.5.1",
-        "lodash": "^4.17.14",
+        "lodash": "^4.17.19",
         "moment": "^2.24.0",
         "play-sound": "^1.1.3",
         "scripture": "joshuacurtiss/scripture#1.0.1",
